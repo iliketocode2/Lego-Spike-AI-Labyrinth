@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Dark Tree</title>
+
+    <!-- Recommended meta tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+    <!-- PyScript CSS -->
+    <link rel="stylesheet" href="https://pyscript.net/releases/2024.4.2/core.css">
+
+    <!-- This script tag bootstraps PyScript -->
+    <script type="module" src="https://pyscript.net/releases/2024.4.2/core.js"></script>
+</head>
+<body>
+    <script type="py" src="./main.py" config="./pyscript.toml"  async></script>
+    <button py-click="connectIt">Connect to BLE</button>
+    <button py-click="disconnectIt">Disconnect from BLE</button>
+    <button py-click="readIt">Read BLE</button>
+<br><br>
+    <div id='text'>text</div>
+
+</body>
+</html>

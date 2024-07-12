@@ -1,0 +1,5 @@
+name = "BLE Comm"
+[files]
+"./webBLE.py" = ""
+[js_modules.main]
+"./ble.js" = "ble"
