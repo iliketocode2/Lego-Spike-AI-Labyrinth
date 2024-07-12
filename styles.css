@@ -1,0 +1,51 @@
+body{
+    font-family: monospace;
+}
+
+h2.num{
+    width: 25px;
+    height: 25px;
+    margin-right: 2px;
+    border-radius: 25px;
+    background-color: #35c1f0;
+    text-align: center;
+    color: white;
+    padding: 2px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+.wrap {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.wrap p, .wrap a {
+    margin: 0;
+    padding: 0;
+}
+
+button.text {
+    font-family: inherit; /* Inherit from body */
+    font-size: 2em;
+    margin: 0.67em 0;
+    font-weight: bold;
+    text-align: center; /* Center text alignment */
+    color: black;
+    border: none; /* Remove default button border */
+    cursor: pointer; /* Change cursor to pointer when hovering */
+    background-color: transparent;
+    text-decoration: none;
+}
+
+button.text:hover {
+    text-decoration: underline; /* Optional: change color on hover */
+}
+
+button.text.inactive{
+    color: gray;
+}
+
+.mpCode_container, .ble_info{
+    display: none;
+}

@@ -21,7 +21,7 @@ def peripheral(name):
         p.disconnect()
         print('closing up')
 
-peripheral('Maria')
+peripheral('Spike')
 '''
 code = '''
 from BLE_CEEO import Yell, Listen
@@ -67,6 +67,6 @@ def central(name):
         L.disconnect()
         print('closing up')
 
-peripheral('Maria')
-#central('Maria')
+peripheral('Spike')
+#central('Spike')
 '''
