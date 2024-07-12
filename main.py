@@ -106,8 +106,6 @@ ble_connected = document.getElementById("ble_connected")
 
 def received_ble(data):
     document.getElementById("ble_answer").innerHTML = 'received: '+data
-    if myClient.connected and ble.connected and push.checked:
-        myClient.publish(pub_topic.value, data)
         
 ble = ble_library.newBLE()
 ble.callback = received_ble
