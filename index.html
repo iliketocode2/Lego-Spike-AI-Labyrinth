@@ -1,25 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Dark Tree</title>
-
-    <!-- Recommended meta tags -->
+    <title>Live Particle Positioning on Spike</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-
-    <!-- PyScript CSS -->
-    <link rel="stylesheet" href="https://pyscript.net/releases/2024.4.2/core.css">
-
-    <!-- This script tag bootstraps PyScript -->
-    <script type="module" src="https://pyscript.net/releases/2024.4.2/core.js"></script>
+    <link rel="stylesheet" href="https://pyscript.net/releases/2024.6.2/core.css">
+    <script type="module" src="https://pyscript.net/releases/2024.6.2/core.js"></script>
 </head>
 <body>
-    <script type="py" src="./main.py" config="./pyscript.toml"  async></script>
-    <button py-click="connectIt">Connect to BLE</button>
-    <button py-click="disconnectIt">Disconnect from BLE</button>
-    <button py-click="readIt">Read BLE</button>
-<br><br>
-    <div id='text'>text</div>
+    <p>First, plug in the Spike to your computer and press the connect up button. Then, once you have
+        connected to the spike, unplug it and run the test bluetooth code in the mpy editor. Then connect
+            to the spike with bluetooth by clicking the connect to BLE button</p>
+    <p>Make sure </p>
+        <a href="https://github.com/chrisbuerginrogers/SPIKE_Prime/blob/main/BLE/BLE_CEEO.py#L1" rel="noopener noreferrer" target="_blank">BLE_CEEO.py</a>
+    <p> is installed on your Spike Prime </p>
+
+    <h1>Testing Serial</h1>
+    <script type="mpy" src="./main.py" config="./pyscript.toml" async></script>
+    <button id="connect">connect up</button>
+    <button id="library">load BLE library</button>
+    <button id="library2">load umqtt library</button>
+    <progress id="progress" value="0" max="100"> 0% </progress>    <br><br>
+    <select name="files" id="files"> </select>
+    <button id="upload">Grab remote code</button> 
+    <button id="clear">Clear</button> 
+    <button id="CtrlC">CtrlC</button> 
+    <button id="test">BLE Test Code</button> <br><br>
+    <script id='mpCode' type="mpy-editor" env="ble" ></script>
+    <div id="repl"></div>
+    <br><br>
+
+    <h1>Testing BLE</h1>
+    <div id='ble_connected'>waiting...</div><br>
+    BLE Name: <input type="text" id='ble_name' maxlength="50" style = 'color:darkblue;border: none;background-color:lightlightgray;' value='Maria'>
+    <button id="ble_connect">Connect to BLE</button>
+    <button id="ble_disconnect">Disconnect from BLE</button> <br>
+    <textarea id='ble_info'>To send</textarea>
+    <button id="send_ble">Send</button><br>
 
 </body>
 </html>
