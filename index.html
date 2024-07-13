@@ -6,43 +6,53 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="stylesheet" href="https://pyscript.net/releases/2024.6.2/core.css">
     <script type="module" src="https://pyscript.net/releases/2024.6.2/core.js"></script>
+    <script src="script.js"></script>
     <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-    <div class="wrap">
-        <p>First, plug in the Spike to your computer and press the connect up button. Then, once you have
-            connected to the spike, unplug it and run the test bluetooth code in the mpy editor. Then connect
-                to the spike with bluetooth by clicking the connect to BLE button Make sure
-        <a href="https://github.com/chrisbuerginrogers/SPIKE_Prime/blob/main/BLE/BLE_CEEO.py#L1" rel="noopener noreferrer" target="_blank">BLE_CEEO.py </a>
-        is installed on your Spike Prime (Do this using Thonny or another Python IDE).</p>
-        <h2 class="num">1</h2><button class="text" id="connect">Connect the Spike</button>
-    </div>
-    <div class="wrap">
-        <h2 class="num">2</h2><button class="text inactive" id="library">Load the BLE Library</button>
-        <progress id="progress" value="0" max="100"> 0% </progress>
-    </div>
-    <div class="wrap">
-        <h2 class="num">3</h2><button class="text inactive" id="ble_connect">Connect via BLE</button>
-    </div>
+    <div class="flex-container">
+        <div class="box left">
+            <p>Make sure
+            <a href="https://github.com/chrisbuerginrogers/SPIKE_Prime/blob/main/BLE/BLE_CEEO.py#L1" rel="noopener noreferrer" target="_blank">BLE_CEEO.py </a>
+            is installed on your Spike Prime (Do this using Thonny or another Python IDE).</p>
 
-    <script type="mpy" src="./main.py" config="./pyscript.toml" async></script>
+            <div class="wrap">
+                <h2 class="num">1</h2><button class="text" id="connect">Connect the Spike</button>
+            </div>
+            <div class="wrap">
+                <h2 class="num">2</h2><button class="text inactive" id="library">Load the BLE Library</button>
+                <div class="progress-container">
+                    <progress id="progress" value="0" max="100"></progress>
+                    <span class="progress-text" id="progress-percent">0%</span>
+                </div>
+            </div>
+            <div class="wrap">
+                <h2 class="num">3</h2><button class="text inactive" id="ble_connect">Connect via BLE</button>
+            </div>
 
-    <div class="mpCode_container">
-        <script id='mpCode' type="mpy-editor" env="ble" ></script>
-        <div id="repl"></div>
+            <script type="mpy" src="./main.py" config="./pyscript.toml" async></script>
+
+            <div class="mpCode_container">
+                <script id='mpCode' type="mpy-editor" env="ble" ></script>
+                <div id="repl"></div>
+            </div>
+
+            <br>
+
+            <div class="ble_info">
+                BLE Name: <input type="text" id='ble_name' maxlength="50" style = 'color:darkblue;border: none;background-color:lightlightgray;' value='Spike'>
+
+                <!--<textarea id='ble_info'>To send</textarea>
+                <button id="send_ble">Send</button><br>-->
+                Latest from BLE:
+                <div style='color:darkblue;' id='ble_answer'>None</div>
+            </div>
+            <br>
+        </div>
+        <div class="box right">
+            <p>fhsofhasofdhsapdfasdfasdfhasdfapihfasodfhaspdfuhasdfiasfhdp</p>
+        </div>
     </div>
-
-    <br>
-
-    <div class="ble_info">
-        BLE Name: <input type="text" id='ble_name' maxlength="50" style = 'color:darkblue;border: none;background-color:lightlightgray;' value='Spike'>
-
-        <!--<textarea id='ble_info'>To send</textarea>
-        <button id="send_ble">Send</button><br>-->
-        Latest from BLE:
-        <div style='color:darkblue;' id='ble_answer'>None</div>
-    </div>
-    <br>
 
 </body>
 </html>

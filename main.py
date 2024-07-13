@@ -2,6 +2,7 @@ from pyscript import document, window, when
 import andrea_terminal, restapi, file_transfer, file_os
 from ble_test import code as test_code
 import json
+import file_transfer
 
 
 # tilt_angles()
@@ -48,17 +49,23 @@ async def on_load(event):
     else:
         window.alert('connect to a processor first')
 
+#define loading bar value
+def update_progress_display(value):    
+    progress_bar.value = value
+    percent_text.innerText = f"{int(value)}%"
+
 path = "https://raw.githubusercontent.com/micropython/micropython-lib/master/micropython/umqtt.simple/umqtt/simple.py"
 
 connect      = document.getElementById('connect')
 library      = document.getElementById('library')
 progress_bar = document.getElementById('progress')
+percent_text = document.getElementById('progress-percent')
 
 connect.onclick = on_connect
 library.onclick = on_load
 
-#terminal = andrea_terminal.Terminal()
-terminal = file_transfer.Ampy(ARDUINO_NANO, progress_bar)
+#update loading bar
+terminal = file_transfer.Ampy(ARDUINO_NANO, update_progress_callback=update_progress_display)
 terminal.disconnect_callback = on_disconnect
 
 btns = [library]
@@ -90,7 +97,7 @@ async def ask(event):
     else:
         name = document.getElementById("ble_name").value
         if await ble.ask(name):
-            print('name ',name)
+            print('name ', name)
             document.getElementById("ble_connect").innerHTML = 'Connecting...'
             await ble.connect() 
             print('connected!')

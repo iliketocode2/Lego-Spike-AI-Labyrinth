@@ -1,48 +1,25 @@
-code2 = '''
-from BLE_CEEO import Yell
-import time
-
-def peripheral(name): 
-    try:
-        p = Yell(name, verbose = False)
-        if p.connect_up():
-            print('P connected')
-            time.sleep(1) 
-            while True:
-                if p.is_any:
-                    print(p.read())
-                if not p.is_connected:
-                    print('lost connection')
-                    break
-                time.sleep(0.01)
-    except Exception as e:
-        print(e)
-    finally:
-        p.disconnect()
-        print('closing up')
-
-peripheral('Spike')
-'''
 code = '''
 from BLE_CEEO import Yell, Listen
-import time
+import hub, utime, runloop, sys
+from hub import port, motion_sensor
 
 def peripheral(name): 
     try:
         p = Yell(name, verbose = True)
         if p.connect_up():
             print('P connected')
-            time.sleep(2)
+            utime.sleep(2)
             payload = ''  
-            for i in range(100):
-                payload += str(i)
+            #parce data here, then put it in the payload motion_sensor.tilt_angles()
+            for i in range(1000):
+                payload = str(motion_sensor.tilt_angles())
                 p.send(payload)
                 if p.is_any:
                     print(p.read())
                 if not p.is_connected:
                     print('lost connection')
                     break
-                time.sleep(1)
+                utime.sleep(1)
     except Exception as e:
         print(e)
     finally:
@@ -56,7 +33,7 @@ def central(name):
         if L.connect_up():
             print('L connected')
             while L.is_connected:
-                time.sleep(4)
+                utime.sleep(4)
                 if L.is_any:
                     reply = L.read()
                     print(reply) #seems to stop at 80 characteres
