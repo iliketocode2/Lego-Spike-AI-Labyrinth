@@ -3,7 +3,7 @@ import andrea_terminal, restapi, file_transfer, file_os
 from ble_test import code as test_code
 import json
 import file_transfer
-
+import math
 
 # tilt_angles()
 
@@ -77,9 +77,26 @@ for b in btns:
 from pyscript.js_modules import ble_library
 
 ble_info = document.getElementById("ble_info")
+yaw = 0
+pitch = 0
+roll = 0
 
 def received_ble(data):
-    document.getElementById("ble_answer").innerHTML = 'received: '+data
+    global yaw, pitch, roll
+    document.getElementById("ble_answer").innerHTML = 'received: '+ data
+    #parse the string 
+    data = data.strip('()') # Remove the parentheses
+    num_strings = data.split(',') # Split the string by comma
+    numbers = [int(num.strip()) for num in num_strings] # Convert the split strings to integers
+    yaw = numbers[0]
+    pitch = numbers[1]
+    roll = numbers[2]
+    # convert from decidegrees to radians and animate
+    window.updateAngles(
+        (pitch / 10) * (math.pi / 180), 
+        (roll / 10) * (math.pi / 180) * -1, 
+        (yaw / 10) * (math.pi / 180) * -1
+    )
         
 ble = ble_library.newBLE()
 ble.callback = received_ble
@@ -109,3 +126,12 @@ async def ask(event):
 def on_send_ble(event):
     print(ble_info.value)
     ble.write(ble_info.value)
+
+
+#--------------------------- controlling the ball --------------------------------
+
+def stop_simulation(event):
+    print('stop simulation')
+
+# stop_button = document.getElementById("stop")
+# stop_button.onclick = stop_simulation

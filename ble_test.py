@@ -11,7 +11,8 @@ def peripheral(name):
             utime.sleep(2)
             payload = ''  
             #parce data here, then put it in the payload motion_sensor.tilt_angles()
-            for i in range(1000):
+            print('Before loop')
+            for i in range(5000):
                 payload = str(motion_sensor.tilt_angles())
                 p.send(payload)
                 if p.is_any:
@@ -19,7 +20,7 @@ def peripheral(name):
                 if not p.is_connected:
                     print('lost connection')
                     break
-                utime.sleep(1)
+                utime.sleep(0.1)
     except Exception as e:
         print(e)
     finally:
