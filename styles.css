@@ -157,10 +157,10 @@ progress::-moz-progress-bar {
   background-color: gray;
 }
 
+/*-----------------GRID-----------------*/
+
 #grid-container {
   display: grid;
-  grid-template-columns: repeat(10, 1fr); /* 10x10 grid, adjust as needed */
-  grid-gap: 1px;
   width: 100%;
   height: 100%;
   position: absolute;
@@ -169,8 +169,7 @@ progress::-moz-progress-bar {
 }
 
 .grid-cell {
-  background-color: transparent;
-  border: 1px solid #030202;
+  border: 2px solid #030202;
   transition: background-color 0.3s;
 }
 
@@ -182,6 +181,26 @@ progress::-moz-progress-bar {
   background-color: rgba(52, 152, 219, 0.5);
 }
 
+.grid-node {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background-color: #3d3b34;
+  transition: background-color 0.3s;
+  cursor: pointer;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+}
+
+.grid-node:hover {
+  background-color: #999;
+}
+
+.grid-node.selected {
+  background-color: #3498db;
+}
+
 #animationCanvas {
   position: absolute;
   top: 0;
@@ -190,5 +209,7 @@ progress::-moz-progress-bar {
   height: 100%;
   pointer-events: none; /* This allows clicks to pass through to the grid cells */
 }
+
+
 
 
