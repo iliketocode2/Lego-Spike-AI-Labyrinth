@@ -82,7 +82,14 @@ button.text.inactive{
 .box.right {
   width: 70vw;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: center; 
+}
+
+h3 {
+  font-size: 2em;
+  font-weight: 600;
+  color: #3d3b34;
 }
 
 progress {
@@ -137,7 +144,8 @@ progress::-moz-progress-bar {
   height: 520px;
   border-radius: 10px;
   background-color: #3d3b34;
-  margin: auto;
+  margin-left: auto;
+  margin-right: auto;
   display: flex;
   align-items: center;
 }
@@ -198,7 +206,26 @@ progress::-moz-progress-bar {
 }
 
 .grid-node.selected {
-  background-color: #3498db;
+  z-index: 1;
+  background-color: #3d3b34;
+}
+
+.grid-cell.start {
+  background-color: #db3434;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+}
+
+.grid-cell.end {
+  background-color: #2ecc71;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
 }
 
 #animationCanvas {
