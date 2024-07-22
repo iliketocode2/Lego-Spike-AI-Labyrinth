@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let isSelectingStart = false;
     let isSelectingEnd = false;
     let gameStarted = false;
-    let ballControlMode = 'sensors';
+    let ballControlMode = 'coordinates';
 
     //--------------------------------- Start and End grid loop setup ---------------------------------
 
@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    //--------------------------------- Grid and Node Setup ---------------------------------
+    //----------------------------------------------- Grid and Node Setup ------------------------------------------------
 
     function createGrid(rows, cols) { // initialize grid properties and divs
         const gridContainer = document.getElementById('grid-container');
@@ -555,15 +555,20 @@ document.addEventListener('DOMContentLoaded', function() {
         lastYaw = yaw;
     };
 
-    //change between x, y control and yaw, pitch, and roll control
+    //change mode and button between x, y control and yaw, pitch, and roll control
     window.toggleBallControlMode = function() {
-        ballControlMode = ballControlMode === 'sensors' ? 'coordinates' : 'sensors';
-        if (ballControlMode === 'coordinates') {
-            document.getElementById('toggle-status').innerHTML = 'Mode: coordinates (x, y)';
+        const toggle = document.getElementById('toggleMode');
+        const slider = toggle.querySelector('.slider');
+        
+        if (ballControlMode === 'sensors') {
+            ballControlMode = 'coordinates';
+            slider.style.transform = 'translateX(0)';
+        } else {
+            ballControlMode = 'sensors';
+            slider.style.transform = 'translateX(-50%)';
         }
-        else{
-            document.getElementById('toggle-status').innerHTML = 'Mode: sensors (yaw, pitch, roll)';
-        }
+        
+        console.log('Ball control mode switched to:', ballControlMode);
     };
 
     animate();

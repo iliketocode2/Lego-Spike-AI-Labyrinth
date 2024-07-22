@@ -237,6 +237,40 @@ progress::-moz-progress-bar {
   pointer-events: none; /* This allows clicks to pass through to the grid cells */
 }
 
+/*-----------------Toggle button-----------------*/
+.toggle-switch {
+  width: 60px;
+  height: 30px;
+  background-color: #3498db;
+  border-radius: 15px;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+}
 
+.slider {
+  width: 200%;
+  height: 100%;
+  display: flex;
+  transition: transform 0.3s ease;
+}
 
+.icon {
+  width: 50%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: white;
+  font-weight: 900;
+}
 
+.sensor-icon {
+  background-color: #2980b9;
+  border-radius: 15px;
+}
+
+.coordinate-icon {
+  background-color: #3498db;
+}

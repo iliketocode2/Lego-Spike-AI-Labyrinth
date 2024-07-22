@@ -31,9 +31,6 @@
                 <h2 class="num">3</h2><button class="text inactive" id="ble_connect">Connect via BLE</button>
             </div>
 
-            <button onclick="window.toggleBallControlMode()">Toggle Ball Control Mode</button>
-            <p id = "toggle-status"></p>
-
             <div class="mpCode_container">
                 <script id='mpCode' type="mpy-editor" env="ble" ></script>
                 <div id="repl"></div>
@@ -66,6 +63,13 @@
                         <div id="grid-container"></div>
                         <canvas id="animationCanvas"></canvas>
                     </div>
+                </div>
+            </div>
+            <br>
+            <div class="toggle-switch" id="toggleMode" onclick="window.toggleBallControlMode()">
+                <div class="slider">
+                    <span class="icon coordinate-icon">x, y</span>
+                    <span class="icon sensor-icon">y, p, r</span>
                 </div>
             </div>
         </div>
