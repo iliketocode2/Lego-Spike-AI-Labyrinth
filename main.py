@@ -161,6 +161,8 @@ import time
 
 U = uart.init(0,115200,100)
 
+#other custom CEEO uart functions. Download the firmware onto your spike here: https://raw.githack.com/tuftsceeo/SPIKE-html/main/index.html
+#BEWARE OF SLIGHT MOTOR ISSUES WITH THIS FIRMWARE -- in other words, running motors sometimes has a strange oscillation affect
 #U.write("hello there")
 #U.read(4)
 #U.readline()
