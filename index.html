@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://pyscript.net/releases/2024.6.2/core.css">
     <script type="module" src="https://pyscript.net/releases/2024.6.2/core.js"></script>
     <script src="script.js"></script>
+    <script type="mpy" src="./main.py" config="./pyscript.toml"></script>
     <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
@@ -30,7 +31,8 @@
                 <h2 class="num">3</h2><button class="text inactive" id="ble_connect">Connect via BLE</button>
             </div>
 
-            <script type="mpy" src="./main.py" config="./pyscript.toml" async></script>
+            <button onclick="window.toggleBallControlMode()">Toggle Ball Control Mode</button>
+            <p id = "toggle-status"></p>
 
             <div class="mpCode_container">
                 <script id='mpCode' type="mpy-editor" env="ble" ></script>

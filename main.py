@@ -1,12 +1,11 @@
 from pyscript import document, window, when
 import andrea_terminal, restapi, file_transfer, file_os
-from ble_test import code as test_code
+from ble_test import code as ble_code
 import json
 import file_transfer
-import math
+import math, re
 
-# tilt_angles()
-
+#
 ARDUINO_NANO = 128
 SPIKE = 256
 path = "https://raw.githubusercontent.com/chrisbuerginrogers/SPIKE_Prime/main/BLE/BLE_CEEO.py"
@@ -36,7 +35,7 @@ async def on_load(event):
         status = await terminal.download(name,reply)
 
         if terminal.connected:
-            await terminal.eval('\x05' + test_code + '\x04') #run code 
+            await terminal.eval('\x05' + ble_code + '\x04') #run code 
             terminal.focus()
             document.getElementById('ble_connect').classList.toggle("inactive")
             # return False
@@ -65,7 +64,7 @@ connect.onclick = on_connect
 library.onclick = on_load
 
 #update loading bar
-terminal = file_transfer.Ampy(ARDUINO_NANO, update_progress_callback=update_progress_display)
+terminal = file_transfer.Ampy(SPIKE, update_progress_callback=update_progress_display)
 terminal.disconnect_callback = on_disconnect
 
 btns = [library]
@@ -80,8 +79,10 @@ ble_info = document.getElementById("ble_info")
 yaw = 0
 pitch = 0
 roll = 0
+x = 0
+y = 0
 
-def received_ble(data):
+def received_ble_physics(data):
     global yaw, pitch, roll
     document.getElementById("ble_answer").innerHTML = 'received: '+ data
     #parse the string 
@@ -97,6 +98,23 @@ def received_ble(data):
         (roll / 10) * (math.pi / 180) * -1, 
         (yaw / 10) * (math.pi / 180) * -1
     )
+
+def parse_coordinates(data):
+    # Since I converted byte string into string, remove b', ', and parentheses, then split by comma
+    clean_data = data.strip("b'()").split(',')
+
+    try:
+        x = int(clean_data[0].strip())
+        y = int(clean_data[1].strip())
+        return x, y
+    except (IndexError, ValueError):
+        print(f"Invalid data format: {data}")
+        return None, None
+    
+def received_ble(data):
+    x, y = parse_coordinates(data)
+    if x is not None and y is not None:
+        window.drawBall(x, y)
         
 ble = ble_library.newBLE()
 ble.callback = received_ble
@@ -135,3 +153,38 @@ def stop_simulation(event):
 
 # stop_button = document.getElementById("stop")
 # stop_button.onclick = stop_simulation
+
+#--------------------------- UART communication with openMV camera -----------------------------
+uart_code = '''
+from hub import uart
+import time
+
+U = uart.init(0,115200,100)
+
+#U.write("hello there")
+#U.read(4)
+#U.readline()
+#U.readuntil("b")
+#U.any()
+#U.readchar()
+#U.txdone()
+#U.status()
+
+
+while(U.status() != "MODE_UART"):
+    ...
+
+while(1):
+    b = U.any()
+    message = U.read(b)
+    messStr = str(message)[2:-3]
+    print('messStr: ', messStr)
+    print('message: ', message)
+    time.sleep(1)
+'''
+
+# async def uart_codeFunc(event):
+#     print('running uart code')
+#     await terminal.eval(uart_code)
+
+# document.getElementById("uartTest").onclick = uart_codeFunc

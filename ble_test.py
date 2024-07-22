@@ -1,7 +1,9 @@
 code = '''
 from BLE_CEEO import Yell, Listen
-import hub, utime, runloop, sys
-from hub import port, motion_sensor
+import hub, utime, runloop, sys, time
+from hub import port, motion_sensor, uart
+
+U = uart.init(0,115200,100)
 
 def peripheral(name): 
     try:
@@ -13,7 +15,17 @@ def peripheral(name):
             #parce data here, then put it in the payload motion_sensor.tilt_angles()
             print('Before loop')
             for i in range(5000):
-                payload = str(motion_sensor.tilt_angles())
+            
+                if U.any():
+                    b = U.any()
+                    message = U.read(b)
+                    payload = str(message)
+                #else:
+                    #payload = str(motion_sensor.tilt_angles())
+
+                
+                #payload = str(motion_sensor.tilt_angles())
+
                 p.send(payload)
                 if p.is_any:
                     print(p.read())
