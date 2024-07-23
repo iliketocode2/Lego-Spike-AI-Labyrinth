@@ -16,17 +16,18 @@ def peripheral(name):
             print('Before loop')
             for i in range(5000):
             
+                payload = ''
+
                 if U.any():
                     b = U.any()
                     message = U.read(b)
-                    payload = str(message)
-                #else:
-                    #payload = str(motion_sensor.tilt_angles())
+                    payload += str(message)
 
-                
-                #payload = str(motion_sensor.tilt_angles())
+                payload += "**"
+                payload += str(motion_sensor.tilt_angles())
 
                 p.send(payload)
+                
                 if p.is_any:
                     print(p.read())
                 if not p.is_connected:

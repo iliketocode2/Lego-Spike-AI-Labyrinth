@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let isSelectingStart = false;
     let isSelectingEnd = false;
     let gameStarted = false;
-    let ballControlMode = 'coordinates';
+    window.ballControlMode = 'coordinates';
 
     //--------------------------------- Start and End grid loop setup ---------------------------------
 
@@ -264,12 +264,33 @@ document.addEventListener('DOMContentLoaded', function() {
         ctx.fill();
     }
 
+    //for my particular setup, the coordinates I am recieving from the openMV program need to be scaled to match the grid on the webpage to match my 'forward' direction
+    //so here I define the OpenMV camera's coordinates for the grid corners (place the ball in each corner of the grid and see what the openMV cam registers)
+    const cameraCorners = {
+        bottomRight: { x: 267, y: 22 },
+        topRight: { x: 267, y: 210 },
+        topLeft: { x: 77, y: 210 },
+        bottomLeft: { x: 77, y: 22 }
+    };
+
     window.drawBall = function(x, y) {
-        if (ballControlMode === 'coordinates' && gameStarted) {
-            ballX = x;
-            ballY = y;
+        if (window.ballControlMode === 'coordinates' && gameStarted) {
+            //map the camera coordinates to canvas coordinates
+            const canvasX = mapRange(x, cameraCorners.topRight.x, cameraCorners.topLeft.x, 0, CANVAS_WIDTH);
+            const canvasY = mapRange(y, cameraCorners.topLeft.y, cameraCorners.bottomLeft.y, 0, CANVAS_HEIGHT);
+
+            //ensure the ball stays within the canvas boundaries
+            ballX = Math.max(BALL_RADIUS, Math.min(CANVAS_WIDTH - BALL_RADIUS, canvasX));
+            ballY = Math.max(BALL_RADIUS, Math.min(CANVAS_HEIGHT - BALL_RADIUS, canvasY));
         }
     };
+
+    //map a value from one range to another: this formula normalizes the input value to a 0-1 range based on inMin and inMax, 
+    //then scales it to the output range based on outMin and outMax, and finally shifts it to the correct position within the output range.
+    //ex: [10, 20] on the range [0, 100]. for input of '15', it would be (15 - 10) * (100 - 0) / (20 - 10) + 0 = 50
+    function mapRange(value, inMin, inMax, outMin, outMax) {
+        return (value - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
+    }
 
     function drawWalls() {
         ctx.strokeStyle = '#3d3b34';
@@ -289,55 +310,55 @@ document.addEventListener('DOMContentLoaded', function() {
         ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
         //control ball position
-        if (ballControlMode === 'sensors' && gameStarted) {
-            if (gameStarted) {
-                let tiltX = Math.sin(roll);
-                let tiltY = Math.sin(pitch);
+        if (window.ballControlMode === 'sensors' && gameStarted) {
             
-                let rotatedTiltX = tiltX * Math.cos(yaw) - tiltY * Math.sin(yaw);
-                let rotatedTiltY = tiltX * Math.sin(yaw) + tiltY * Math.cos(yaw);
-            
-                let tiltMagnitude = Math.sqrt(rotatedTiltX * rotatedTiltX + rotatedTiltY * rotatedTiltY);
-            
-                // Check if tilt exceeds the minimum angle to overcome static friction
-                if (tiltMagnitude > MIN_TILT_ANGLE) {
-                    let accX = rotatedTiltX * GRAVITY;
-                    let accY = rotatedTiltY * GRAVITY;
-            
-                    velocityX += accX;
-                    velocityY += accY;
-            
-                    velocityX *= FRICTION;
-                    velocityY *= FRICTION;
-            
-                    let newX = ballX + velocityX;
-                    let newY = ballY + velocityY;
-            
-                    // Check for wall collisions
-                    let collided = handleWallCollisions(newX, newY);
-            
-                    // If no collision occurred, update ball position
-                    if (!collided) {
-                        ballX = newX;
-                        ballY = newY;
-                    }
-            
-                    // Check for node collisions
-                    handleNodeCollisions(ballX, ballY);
-            
-                    // Keep ball within canvas bounds (with bounce)
-                    handleBoundaryCollisions();
-            
-                    const distanceMoved = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
-                    ballRotation += distanceMoved / BALL_RADIUS;
-            
-                    if (Math.abs(velocityX) < 0.01) velocityX = 0;
-                    if (Math.abs(velocityY) < 0.01) velocityY = 0;
-                } else {
-                    // Ball doesn't move due to static friction
-                    velocityX = 0;
-                    velocityY = 0;
+            let tiltX = Math.sin(roll);
+            let tiltY = Math.sin(pitch);
+        
+            let rotatedTiltX = tiltX * Math.cos(yaw) - tiltY * Math.sin(yaw);
+            let rotatedTiltY = tiltX * Math.sin(yaw) + tiltY * Math.cos(yaw);
+        
+            let tiltMagnitude = Math.sqrt(rotatedTiltX * rotatedTiltX + rotatedTiltY * rotatedTiltY);
+        
+            // Check if tilt exceeds the minimum angle to overcome static friction
+            if (tiltMagnitude > MIN_TILT_ANGLE) {
+                let accX = rotatedTiltX * GRAVITY;
+                let accY = rotatedTiltY * GRAVITY;
+        
+                velocityX += accX;
+                velocityY += accY;
+        
+                velocityX *= FRICTION;
+                velocityY *= FRICTION;
+        
+                let newX = ballX + velocityX;
+                let newY = ballY + velocityY;
+        
+                // Check for wall collisions
+                let collided = handleWallCollisions(newX, newY);
+        
+                // If no collision occurred, update ball position
+                if (!collided) {
+                    ballX = newX;
+                    ballY = newY;
                 }
+        
+                // Check for node collisions
+                handleNodeCollisions(ballX, ballY);
+        
+                // Keep ball within canvas bounds (with bounce)
+                handleBoundaryCollisions();
+        
+                const distanceMoved = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
+                ballRotation += distanceMoved / BALL_RADIUS;
+        
+                if (Math.abs(velocityX) < 0.01) velocityX = 0;
+                if (Math.abs(velocityY) < 0.01) velocityY = 0;
+            } 
+            else {
+                // Ball doesn't move due to static friction
+                velocityX = 0;
+                velocityY = 0;
             }
         }
 
@@ -347,7 +368,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (gameStarted) {
             drawBall(ballX, ballY);
             checkEndReached();
-            if (ballControlMode === 'sensors') {
+            if (window.ballControlMode === 'sensors') {
                 drawTiltIndicator(pitch, roll, yaw);
             }
         }
@@ -560,18 +581,36 @@ document.addEventListener('DOMContentLoaded', function() {
         const toggle = document.getElementById('toggleMode');
         const slider = toggle.querySelector('.slider');
         
-        if (ballControlMode === 'sensors') {
-            ballControlMode = 'coordinates';
+        if (window.ballControlMode === 'sensors') {
+            window.ballControlMode = 'coordinates';
             slider.style.transform = 'translateX(0)';
         } else {
-            ballControlMode = 'sensors';
+            window.ballControlMode = 'sensors';
             slider.style.transform = 'translateX(-50%)';
         }
         
-        console.log('Ball control mode switched to:', ballControlMode);
+        console.log('Ball control mode switched to:', window.ballControlMode);
+    
+        // Notify Python about the mode change
+        if (window.notifyPythonModeChange) {
+            window.notifyPythonModeChange(window.ballControlMode);
+        }
+    };
+    
+    // Add this function to your JavaScript
+    window.updateBallPosition = function(x, y) {
+        if (window.ballControlMode === 'coordinates') {
+            window.drawBall(x, y);
+        }
+    };
+    
+    // Add this function to your JavaScript
+    window.updateBallTilt = function(pitch, roll, yaw) {
+        if (window.ballControlMode === 'sensors') {
+            window.updateAngles(pitch, roll, yaw);
+        }
     };
 
     animate();
-    window.updateAngles(0, 0, 0); //initial draw
     initializeGame();
 });

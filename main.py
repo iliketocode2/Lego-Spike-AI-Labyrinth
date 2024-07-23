@@ -82,39 +82,61 @@ roll = 0
 x = 0
 y = 0
 
-def received_ble_physics(data):
-    global yaw, pitch, roll
+#split the data into x,y and yaw, pitch, roll based on the ** delimiter
+def parse_payload(data):
     document.getElementById("ble_answer").innerHTML = 'received: '+ data
-    #parse the string 
+    parts = data.split("**")
+    xy_data = parts[0] if len(parts) > 0 else ""
+    ypr_data = parts[1] if len(parts) > 1 else ""
+    return xy_data, ypr_data
+
+def parse_ypr(data):
     data = data.strip('()') # Remove the parentheses
     num_strings = data.split(',') # Split the string by comma
-    numbers = [int(num.strip()) for num in num_strings] # Convert the split strings to integers
-    yaw = numbers[0]
-    pitch = numbers[1]
-    roll = numbers[2]
-    # convert from decidegrees to radians and animate
-    window.updateAngles(
-        (pitch / 10) * (math.pi / 180), 
-        (roll / 10) * (math.pi / 180) * -1, 
-        (yaw / 10) * (math.pi / 180) * -1
-    )
+    try:
+        numbers = [int(num.strip()) for num in num_strings] # Convert the split strings to integers
+        if len(numbers) != 3:
+            raise ValueError("Expected 3 numbers for yaw, pitch, roll")
+        return numbers
+    except (ValueError, IndexError) as e:
+        print(f"Error parsing yaw, pitch, roll data: {e}")
+        return None, None, None
 
-def parse_coordinates(data):
-    # Since I converted byte string into string, remove b', ', and parentheses, then split by comma
-    clean_data = data.strip("b'()").split(',')
+def parse_xy(data):
+    xy_data, _ = parse_payload(data)
+    if not xy_data:
+        print("No x, y coordinate data available") #when openmv does not recognize the ball
+        return None, None
+    
+    # since I converted byte string into string, remove b', ', and parentheses, then split by comma
+    clean_data = xy_data.strip("b'()").split(',')
 
     try:
+        if len(clean_data) != 2:
+            raise ValueError("Expected 2 values for x and y coordinates")
         x = int(clean_data[0].strip())
         y = int(clean_data[1].strip())
         return x, y
-    except (IndexError, ValueError):
-        print(f"Invalid data format: {data}")
+    except (IndexError, ValueError) as e:
+        print(f"Invalid data format: {data}. Error: {e}")
         return None, None
-    
+
+#when I receive ble data, decide whether I am going to parse the xy info or the ypr info based on current mode
 def received_ble(data):
-    x, y = parse_coordinates(data)
-    if x is not None and y is not None:
-        window.drawBall(x, y)
+    xy_data, ypr_data = parse_payload(data)
+    
+    if window.ballControlMode == 'coordinates':
+        x, y = parse_xy(xy_data)
+        if x is not None and y is not None:
+            window.updateBallPosition(x, y)
+    else:
+        yaw, pitch, roll = parse_ypr(ypr_data)
+        if yaw is not None and pitch is not None and roll is not None:
+            # from decidegrees convert to radians 
+            pitch_rad = (pitch / 10) * (math.pi / 180)
+            roll_rad = (roll / 10) * (math.pi / 180) * -1
+            yaw_rad = (yaw / 10) * (math.pi / 180) * -1
+            window.updateBallTilt(pitch_rad, roll_rad, yaw_rad)
         
 ble = ble_library.newBLE()
 ble.callback = received_ble
@@ -144,7 +166,6 @@ async def ask(event):
 def on_send_ble(event):
     print(ble_info.value)
     ble.write(ble_info.value)
-
 
 #--------------------------- controlling the ball --------------------------------
 
