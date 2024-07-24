@@ -14,7 +14,15 @@
   <li>OpenMV IDE</li>
   <li>Visual Studio Code or another IDE to run pyscript on: Pyscript.com, Github Codespace with pyscript presetup, etc</li>
   <li>Lego Spike</li>
-  <li>Plenty of lego beams, pins, and plates (I used a combination of about 3 spike kits worth of parts</li>
+  <li>Lego pieces (I used a combination of about 3 spike kits worth of parts)</li>
+    <ul>
+      <li>Two large Spike Motors</li>
+      <li>One Spike Prime Hub</li>
+      <li>Large Beams</li>
+      <li>Right Angle Connectors</li>
+      <li>Two Yellow Plates</li>
+      <li>etc...</li>
+    </ul>
   <li>Some cord to connect the Spike to your computer (typically usb to micro usb)</li>
   <li><a href="https://raw.githack.com/tuftsceeo/SPIKE-html/main/index.html">Custom firmware (for uart communication)</a></li>
   <li><a href="https://github.com/chrisbuerginrogers/SPIKE_Prime/blob/main/BLE/BLE_CEEO.py#L1">BLE_CEEO.py</a> for establishing a bluetooth connection between your Spike and your computer</li>
