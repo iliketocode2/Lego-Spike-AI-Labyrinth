@@ -49,37 +49,68 @@ function generateRewardSystem() {
     const endCol = parseInt(window.endSquare.dataset.col);
     const maxDistance = Math.sqrt(Math.pow(window.ROWS - 1, 2) + Math.pow(window.COLS - 1, 2));
 
+    // Initialize reward grid based on distance from end state
     for (let i = 0; i < window.ROWS; i++) {
         rewardGrid[i] = [];
         for (let j = 0; j < window.COLS; j++) {
             const distance = Math.sqrt(Math.pow(i - endRow, 2) + Math.pow(j - endCol, 2));
             const normalizedDistance = distance / maxDistance;
-            rewardGrid[i][j] = 1 - normalizedDistance;
+            rewardGrid[i][j] = Math.exp(-5 * normalizedDistance) - 0.5;
         }
     }
 
-    // Set a higher reward for the end square
-    rewardGrid[endRow][endCol] = 10;
+    // Set a much higher reward for the end square
+    rewardGrid[endRow][endCol] = 100;
+
+    // Adjust rewards for squares adjacent to walls
+    const walls = getWalls();
+    walls.forEach(wall => {
+        const { row, col, orientation } = wall;
+
+        // Adjust rewards for squares adjacent to horizontal walls
+        if (orientation === 'horizontal') {
+            if (row > 0) rewardGrid[row - 1][col] -= 0.1; // above the wall
+            if (row < window.ROWS - 1) rewardGrid[row + 1][col] -= 0.1; // below the wall
+        }
+
+        // Adjust rewards for squares adjacent to vertical walls
+        if (orientation === 'vertical') {
+            if (col > 0) rewardGrid[row][col - 1] -= 0.1; // left of the wall
+            if (col < window.COLS - 1) rewardGrid[row][col + 1] -= 0.1; // right of the wall
+        }
+    });
 
     console.log("Generated Reward Grid:", rewardGrid);
     return rewardGrid;
 }
 
+function getWalls() {
+    const walls = [];
+    document.querySelectorAll('.wall-space.wall').forEach(wallSpace => {
+        const row = parseInt(wallSpace.dataset.row);
+        const col = parseInt(wallSpace.dataset.col);
+        const orientation = wallSpace.classList.contains('horizontal') ? 'horizontal' : 'vertical';
+        walls.push({ row, col, orientation });
+    });
+    return walls;
+}
+
+
 class QLearningAgent {
-    constructor(env, alpha = 0.1, gamma = 0.9, epsilon = 0.1) {
+    constructor(env, alpha = 0.1, gamma = 0.99, epsilon = 0.1) {
         this.env = env;
         this.alpha = alpha;
         this.gamma = gamma;
         this.epsilon = epsilon;
         this.qtable = this.initializeQTable();
-        this.actions = ['up', 'down', 'left', 'right'];
     }
 
     initializeQTable() {
         const table = {};
-        for (let i = 0; i < ROWS; i++) {
-            for (let j = 0; j < COLS; j++) {
-                table[`${i},${j}`] = {
+        for (let i = 0; i < window.ROWS; i++) {
+            for (let j = 0; j < window.COLS; j++) {
+                const state = `${i},${j}`;
+                table[state] = {
                     up: 0,
                     down: 0,
                     left: 0,
@@ -91,31 +122,36 @@ class QLearningAgent {
     }
 
     chooseAction(state) {
+        const validActions = this.env.getValidActions(state);
         if (Math.random() < this.epsilon) {
-            return this.actions[Math.floor(Math.random() * this.actions.length)];
+            return validActions[Math.floor(Math.random() * validActions.length)];
         } else {
             const stateActions = this.qtable[state];
-            return Object.keys(stateActions).reduce((a, b) => stateActions[a] > stateActions[b] ? a : b);
+            return validActions.reduce((a, b) => stateActions[a] > stateActions[b] ? a : b);
         }
     }
 
     learn(state, action, reward, nextState) {
         const predict = this.qtable[state][action];
-        const target = reward + this.gamma * Math.max(...Object.values(this.qtable[nextState]));
+        const validNextActions = this.env.getValidActions(nextState);
+        const nextStateValues = validNextActions.map(a => this.qtable[nextState][a]);
+        const target = reward + this.gamma * Math.max(...nextStateValues);
         this.qtable[state][action] += this.alpha * (target - predict);
     }
 }
 
+/*-----------simulates the environment in which the agent operates, providing states, rewards, and transitions based on the actions taken by the agent.-----------*/
 class Environment {
     constructor(rewardGrid) {
         this.rewardGrid = rewardGrid;
         this.currentState = this.getStartState();
         this.endState = this.getEndState();
-        
-        // Add this logging
+        this.walls = this.getWalls();
+
         console.log("Reward Grid:", this.rewardGrid);
         console.log("Start State:", this.currentState);
         console.log("End State:", this.endState);
+        console.log("Walls:", this.walls);
     }
 
     getStartState() {
@@ -128,6 +164,17 @@ class Environment {
         const endRow = parseInt(window.endSquare.dataset.row);
         const endCol = parseInt(window.endSquare.dataset.col);
         return `${endRow},${endCol}`;
+    }
+
+    getWalls() {
+        const walls = new Set();
+        document.querySelectorAll('.wall-space.wall').forEach(wallSpace => {
+            const row = parseInt(wallSpace.dataset.row);
+            const col = parseInt(wallSpace.dataset.col);
+            const orientation = wallSpace.classList.contains('horizontal') ? 'h' : 'v';
+            walls.add(`${row},${col},${orientation}`);
+        });
+        return walls;
     }
 
     reset() {
@@ -147,40 +194,43 @@ class Environment {
             case 'right': newCol++; break;
         }
 
-        // Add error checking
-        if (!this.rewardGrid || !this.rewardGrid[newRow] || typeof this.rewardGrid[newRow][newCol] === 'undefined') {
-            console.error("Invalid rewardGrid access:", newRow, newCol);
-            console.log("Current rewardGrid:", this.rewardGrid);
-            return [this.currentState, -1, false]; // Return current state with a penalty
-        }
-
         if (this.isValidMove(row, col, newRow, newCol)) {
             this.currentState = `${newRow},${newCol}`;
+            const reward = this.rewardGrid[newRow][newCol];
+            const done = this.currentState === this.endState;
+            const finalReward = done ? reward + 1000 : reward;
+            return [this.currentState, finalReward, done];
+        } else {
+            // If move is invalid, stay in the current state and apply a large penalty
+            return [this.currentState, -1000, false];
         }
-
-        const reward = this.rewardGrid[newRow][newCol];
-        const done = this.currentState === this.endState;
-
-        return [this.currentState, reward, done];
     }
 
     isValidMove(row, col, newRow, newCol) {
-        if (newRow < 0 || newRow >= ROWS || newCol < 0 || newCol >= COLS) {
+        if (newRow < 0 || newRow >= window.ROWS || newCol < 0 || newCol >= window.COLS) {
             return false;
         }
 
         // Check for walls
-        const wallElement = document.querySelector(`.wall-space[data-row="${Math.min(row, newRow)}"][data-col="${Math.min(col, newCol)}"]`);
-        if (wallElement && wallElement.classList.contains('wall')) {
-            if (row !== newRow && wallElement.classList.contains('horizontal')) {
-                return false;
-            }
-            if (col !== newCol && wallElement.classList.contains('vertical')) {
-                return false;
-            }
+        if (row !== newRow) {  // Vertical movement
+            const minRow = Math.min(row, newRow);
+            if (this.walls.has(`${minRow},${col},h`)) return false;
+        } else if (col !== newCol) {  // Horizontal movement
+            const minCol = Math.min(col, newCol);
+            if (this.walls.has(`${row},${minCol},v`)) return false;
         }
 
         return true;
+    }
+
+    getValidActions(state) {
+        const [row, col] = state.split(',').map(Number);
+        const validActions = [];
+        if (this.isValidMove(row, col, row-1, col)) validActions.push('up');
+        if (this.isValidMove(row, col, row+1, col)) validActions.push('down');
+        if (this.isValidMove(row, col, row, col-1)) validActions.push('left');
+        if (this.isValidMove(row, col, row, col+1)) validActions.push('right');
+        return validActions;
     }
 }
 
@@ -190,21 +240,28 @@ function runQLearning() {
     const env = new Environment(rewardGrid);
     const agent = new QLearningAgent(env);
 
-    const numEpisodes = 50;
-    const maxSteps = 100;
+    const numEpisodes = 10000;  // Increase the number of episodes
+    const maxSteps = window.ROWS * window.COLS * 4;
 
     for (let episode = 0; episode < numEpisodes; episode++) {
         let state = env.reset();
-        console.log(`Episode ${episode + 1}, Initial State: ${state}`);
+        let totalReward = 0;
+        
         for (let step = 0; step < maxSteps; step++) {
             const action = agent.chooseAction(state);
-            console.log(`Step ${step + 1}, Action: ${action}`);
             const [nextState, reward, done] = env.step(action);
-            console.log(`Next State: ${nextState}, Reward: ${reward}, Done: ${done}`);
             agent.learn(state, action, reward, nextState);
             state = nextState;
-            if (done) break;
+            totalReward += reward;
+            
+            if (done) {
+                console.log(`Episode ${episode + 1} finished after ${step + 1} steps. Total reward: ${totalReward}`);
+                break;
+            }
         }
+        
+        // Decay epsilon over time to reduce exploration
+        agent.epsilon = Math.max(0.01, agent.epsilon * 0.9999);
     }
 
     showTrainingCompletePopup();
@@ -222,41 +279,36 @@ function showTrainingCompletePopup() {
 function displayOptimalPath(agent) {
     let state = agent.env.getStartState();
     const path = [state];
-    const maxPathLength = window.ROWS * window.COLS; // Maximum possible path length
+    const maxPathLength = window.ROWS * window.COLS * 2;
     let stepCount = 0;
 
-    console.log("Start state:", state);
-    console.log("End state:", agent.env.endState);
-
     while (state !== agent.env.endState && stepCount < maxPathLength) {
-        console.log("Current state:", state);
-        console.log("Q-values for current state:", agent.qtable[state]);
-
-        const action = Object.keys(agent.qtable[state]).reduce((a, b) => agent.qtable[state][a] > agent.qtable[state][b] ? a : b);
-        console.log("Chosen action:", action);
-
-        const [row, col] = state.split(',').map(Number);
-        let newRow = row;
-        let newCol = col;
-
-        switch (action) {
-            case 'up': newRow--; break;
-            case 'down': newRow++; break;
-            case 'left': newCol--; break;
-            case 'right': newCol++; break;
-        }
-
-        if (newRow < 0 || newRow >= window.ROWS || newCol < 0 || newCol >= window.COLS) {
-            console.log("Invalid move, breaking the loop");
+        const validActions = agent.env.getValidActions(state);
+        if (validActions.length === 0) {
+            console.log("No valid moves available, stopping path");
             break;
         }
 
-        state = `${newRow},${newCol}`;
+        const action = validActions.reduce((a, b) => agent.qtable[state][a] > agent.qtable[state][b] ? a : b);
+        const [newRow, newCol] = state.split(',').map(Number);
+        let nextRow = newRow;
+        let nextCol = newCol;
+
+        switch (action) {
+            case 'up': nextRow--; break;
+            case 'down': nextRow++; break;
+            case 'left': nextCol--; break;
+            case 'right': nextCol++; break;
+        }
+
+        state = `${nextRow},${nextCol}`;
         path.push(state);
         stepCount++;
 
-        console.log("New state:", state);
-        console.log("Current path:", path);
+        if (state === agent.env.endState) {
+            console.log("End state reached!");
+            break;
+        }
     }
 
     console.log("Final path:", path);
@@ -265,13 +317,23 @@ function displayOptimalPath(agent) {
         console.log("Maximum path length reached, path may be incomplete");
     }
 
-    path.forEach(state => {
+    // Display the path
+    path.forEach((state, index) => {
         const [row, col] = state.split(',').map(Number);
         const cell = document.querySelector(`.grid-cell[data-row="${row}"][data-col="${col}"]`);
         if (cell) {
             const pathMarker = document.createElement('div');
             pathMarker.className = 'path-marker';
-            pathMarker.style.cssText = 'width: 10px; height: 10px; background: none; border: 1px solid white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);';
+            pathMarker.style.cssText = `
+                width: 10px; 
+                height: 10px; 
+                background: ${index === 0 ? 'green' : index === path.length - 1 ? 'red' : 'blue'}; 
+                border-radius: 50%; 
+                position: absolute; 
+                top: 50%; 
+                left: 50%; 
+                transform: translate(-50%, -50%);
+            `;
             cell.appendChild(pathMarker);
         }
     });
