@@ -3,7 +3,7 @@
 
 ###
 
-<h2 style="color: red">DISCLAIMER</h2>
+<h2>DISCLAIMER</h2>
 <p>This project is not yet finished, I have yet to integrate the AI algorithms into the program and Spike Motor control to actually physically move the ball from the chosen start square to end square.</p>
 
 <h5>Materials:</h5>
