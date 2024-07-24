@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let walls = [];
     let nodes = [];
     let gridRotation = 0;
+    let rotationDirection = '';
     let startSquare = null;
     let endSquare = null;
     let isSelectingStart = false;
@@ -39,15 +40,6 @@ document.addEventListener('DOMContentLoaded', function() {
         canvas.width = simulation.offsetWidth;
         canvas.height = simulation.offsetHeight;
         return canvas.getContext('2d');
-    }
-
-    function rotateCoordinates(row, col) {
-        switch(gridRotation) {
-            case 0: return [row, col];
-            case 90: return [col, ROWS - 1 - row];
-            case 180: return [ROWS - 1 - row, COLS - 1 - col];
-            case 270: return [COLS - 1 - col, row];
-        }
     }
 
     function unrotateCoordinates(row, col) {
@@ -87,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
         isSelectingStart = true;
         isSelectingEnd = false;
         gameStarted = false;
-        promptUser("Select the start square");
+        promptUser("Select the start square and draw labyrinth walls");
     }
     
     function setStartSquare(square) {
@@ -153,7 +145,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const gridContainer = document.getElementById('grid-container');
         gridContainer.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
         gridContainer.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
-
+    
         for (let i = 0; i < rows; i++) {
             for (let j = 0; j < cols; j++) {
                 const cell = document.createElement('div');
@@ -161,41 +153,74 @@ document.addEventListener('DOMContentLoaded', function() {
                 cell.dataset.row = i;
                 cell.dataset.col = j;
                 cell.addEventListener('click', handleSquareClick);
+    
+                // Add wall spaces
+                if (i > 0) {
+                    const horizontalWall = document.createElement('div');
+                    horizontalWall.classList.add('wall-space', 'horizontal');
+                    horizontalWall.dataset.row = i;
+                    horizontalWall.dataset.col = j;
+                    horizontalWall.dataset.orientation = 'horizontal';
+                    horizontalWall.addEventListener('click', toggleWall);
+                    cell.appendChild(horizontalWall);
+                }
+                if (j > 0) {
+                    const verticalWall = document.createElement('div');
+                    verticalWall.classList.add('wall-space', 'vertical');
+                    verticalWall.dataset.row = i;
+                    verticalWall.dataset.col = j;
+                    verticalWall.dataset.orientation = 'vertical';
+                    verticalWall.addEventListener('click', toggleWall);
+                    cell.appendChild(verticalWall);
+                }
+    
                 gridContainer.appendChild(cell);
             }
         }
         createNodes(gridContainer, rows, cols);
     }
-
+    
     function createNodes(gridContainer, rows, cols) {
         for (let i = 0; i <= rows; i++) {
             for (let j = 0; j <= cols; j++) {
                 const node = document.createElement('div');
-                node.classList.add('grid-node');
-                updateNodePosition(node, i, j);
                 
-                // Check if the node is on the perimeter
-                if (i === 0 || i === rows || j === 0 || j === cols) {
-                    node.classList.add('selected', 'perimeter');
+                // remove nodes from corners
+                if (!((i === 0 && j ===0) || (i === 0 && j === cols) || (i === rows && j === 0) || (i === rows && j === cols))) {
+                    node.classList.add('grid-node');
+                    updateNodePosition(node, i, j);
                 }
 
-                node.addEventListener('click', toggleNodeSelection);
                 gridContainer.appendChild(node);
-
-                // Store node positions for collision detection
-                nodes.push({
-                    x: j * CANVAS_WIDTH / cols,
-                    y: i * CANVAS_HEIGHT / rows,
-                    radius: 5 // Radius of the node for collision detection
-                });
             }
         }
     }
 
-    function toggleNodeSelection(event) {
-        const node = event.target;
-        node.classList.toggle('selected');
-        checkForWalls(node);
+    function toggleWall(event) {
+        event.stopPropagation();
+        const wallSpace = event.target;
+        wallSpace.classList.toggle('wall');
+        updateWalls();
+    }
+
+    function updateWalls() {
+        document.querySelectorAll('.wall-space.wall').forEach(wallSpace => {
+            const row = parseInt(wallSpace.dataset.row);
+            const col = parseInt(wallSpace.dataset.col);
+            const orientation = wallSpace.dataset.orientation;
+    
+            if (orientation === 'horizontal') {
+                walls.push({
+                    x1: col, y1: row,
+                    x2: col + 1, y2: row
+                });
+            } else {
+                walls.push({
+                    x1: col, y1: row,
+                    x2: col, y2: row + 1
+                });
+            }
+        });
     }
 
     function updateNodePosition(node, row, col) {
@@ -253,39 +278,85 @@ document.addEventListener('DOMContentLoaded', function() {
     function rotateGrid(direction) {
         if (direction === 'cw') {
             gridRotation = (gridRotation + 90) % 360;
+            rotationDirection = 'cw';
         } else {
             gridRotation = (gridRotation - 90 + 360) % 360;
+            rotationDirection = 'ccw';
         }
         updateDirectionIndicator();
-        rotateNodes();
+        rotateWalls();
         rotateStartEndSquares();
         redrawCanvas();
     }
 
-    function rotateNodes() {
+    function rotateCoordinates(row, col, gridSize) { 
+        if (rotationDirection === 'cw') {
+            return [col, gridSize - 1 - row]; //rotates coordinates 90 degrees clockwise
+        }
+        else{
+            return [gridSize - 1 - col, row]; //rotates coordinates 90 degrees counterclockwise
+        }
+    }
+
+    function rotateWalls() {
         const gridContainer = document.getElementById('grid-container');
-        const nodeElements = gridContainer.querySelectorAll('.grid-node');
-        
-        nodeElements.forEach(node => {
-            const oldRow = parseInt(node.dataset.row);
-            const oldCol = parseInt(node.dataset.col);
-            const [newRow, newCol] = rotateCoordinates(oldRow, oldCol);
-            updateNodePosition(node, newRow, newCol);
+        const wallSpaces = gridContainer.querySelectorAll('.wall-space.wall');
+        const gridSize = 5;
+
+        // Store current wall elements and their data
+        const wallsData = [];
+        wallSpaces.forEach(wallSpace => {
+            const oldRow = parseInt(wallSpace.dataset.row);
+            const oldCol = parseInt(wallSpace.dataset.col);
+            const oldOrientation = wallSpace.dataset.orientation;
+            wallsData.push({ element: wallSpace, row: oldRow, col: oldCol, orientation: oldOrientation });
         });
+    
+        // Remove all current wall elements
+        wallSpaces.forEach(wallSpace => wallSpace.remove());
+    
+        // Recreate wall elements with updated positions and orientations
+        wallsData.forEach(wall => {
+            let [newRow, newCol] = rotateCoordinates(wall.row, wall.col, gridSize);
+            let newOrientation = wall.orientation === 'horizontal' ? 'vertical' : 'horizontal';
+            
+            // Create a new wall element
+            const newWallSpace = document.createElement('div');
+            newWallSpace.classList.add('wall-segment', newOrientation);
+            newWallSpace.dataset.row = newRow;
+            newWallSpace.dataset.col = newCol;
+            newWallSpace.dataset.orientation = newOrientation;
+            
+            // Append new wall element to the grid
+            gridContainer.appendChild(newWallSpace);
+        });
+    
+        updateWalls();
     }
 
     function rotateStartEndSquares() {
+        const gridSize = ROWS; // Assuming ROWS === COLS, otherwise use Math.max(ROWS, COLS)
+    
         if (startSquare) {
-            const [newRow, newCol] = rotateCoordinates(parseInt(startSquare.dataset.row), parseInt(startSquare.dataset.col));
+            const [newRow, newCol] = rotateCoordinates(
+                parseInt(startSquare.dataset.row),
+                parseInt(startSquare.dataset.col),
+                gridSize
+            );
+            console.log('Rotating start square:', startSquare.dataset.row, startSquare.dataset.col, '->', newRow, newCol);
             startSquare.classList.remove('start');
             startSquare.textContent = '';
             startSquare = document.querySelector(`.grid-cell[data-row="${newRow}"][data-col="${newCol}"]`);
             startSquare.classList.add('start');
             startSquare.textContent = 'Start';
         }
-        
         if (endSquare) {
-            const [newRow, newCol] = rotateCoordinates(parseInt(endSquare.dataset.row), parseInt(endSquare.dataset.col));
+            const [newRow, newCol] = rotateCoordinates(
+                parseInt(endSquare.dataset.row),
+                parseInt(endSquare.dataset.col),
+                gridSize
+            );
+
             endSquare.classList.remove('end');
             endSquare.textContent = '';
             endSquare = document.querySelector(`.grid-cell[data-row="${newRow}"][data-col="${newCol}"]`);
@@ -301,25 +372,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 //----------------------------------------Canvas Setup/Drawing----------------------------------------
-    
+
     function redrawCanvas() {
         ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
         ctx.save();
         ctx.translate(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
         ctx.rotate(gridRotation * Math.PI / 180);
         ctx.translate(-CANVAS_WIDTH / 2, -CANVAS_HEIGHT / 2);
-
+    
         drawGrid();
         drawWalls();
-
+    
         ctx.restore();
-
+    
         if (gameStarted) {
             if (window.ballControlMode === 'sensors'){
                 moveCircle(lastPitch, lastRoll);
                 drawTiltIndicator(pitch, roll);
-            }
-            else{
+            } else {
                 drawBall(ballX, ballY);
             }
             checkEndReached();

@@ -167,6 +167,30 @@ progress::-moz-progress-bar {
 
 /*--------------------------------GRID-----------------------------*/
 
+/* .grid-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+} */
+
+/*claude code below*/
+/* .grid-container {
+  display: grid;
+  gap: 2px;
+  background-color: #3d3b34;
+  padding: 2px;
+  border-radius: 5px;
+} */
+
+.grid-container{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 2px;
+  border-radius: 5px;
+}
+
 #grid-container {
   display: grid;
   width: 100%;
@@ -176,15 +200,17 @@ progress::-moz-progress-bar {
   left: 0;
 }
 
-.grid-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.grid-cell {
+/* .grid-cell {
   border: 2px solid #030202;
   transition: background-color 0.3s;
+} */
+
+.grid-cell {
+  border: 1px solid #3d3b34;
+  aspect-ratio: 1;
+  position: relative;
+  transition: background-color 0.3s;
+  z-index: 0;
 }
 
 .grid-cell:hover {
@@ -195,7 +221,7 @@ progress::-moz-progress-bar {
   background-color: rgba(52, 152, 219, 0.5);
 }
 
-.grid-node {
+/* .grid-node {
   width: 15px;
   height: 15px;
   border-radius: 50%;
@@ -205,15 +231,47 @@ progress::-moz-progress-bar {
   position: absolute;
   transform: translate(-50%, -50%);
   z-index: 0;
-}
+} */
 
-.grid-node:hover {
-  background-color: #999;
-}
-
-.grid-node.selected {
-  z-index: 1;
+.grid-node {
+  width: 20px;
+  height: 20px;
   background-color: #3d3b34;
+  border-radius: 50%;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 6;
+}
+
+.wall-space {
+  position: absolute;
+  background-color: transparent;
+  transition: background-color 0.3s;
+  background-color: none;
+  z-index: 3;
+}
+
+.wall-space:hover {
+  background-color: #3d3b34;
+  cursor: pointer;
+}
+
+.wall-space.wall {
+  background-color: #3d3b34;
+}
+
+.wall-space.horizontal {
+  height: 8px;
+  width: 100%;
+  top: -4px;
+  left: 0;
+}
+
+.wall-space.vertical {
+  width: 8px;
+  height: 100%;
+  left: -4px;
+  top: 0;
 }
 
 .grid-cell.start {
@@ -223,6 +281,7 @@ progress::-moz-progress-bar {
   justify-content: center;
   align-items: center;
   font-weight: bold;
+  z-index: 0;
 }
 
 .grid-cell.end {
@@ -232,6 +291,7 @@ progress::-moz-progress-bar {
   justify-content: center;
   align-items: center;
   font-weight: bold;
+  z-index: 0;
 }
 
 #animationCanvas {
@@ -241,6 +301,7 @@ progress::-moz-progress-bar {
   width: 100%;
   height: 100%;
   pointer-events: none; /* This allows clicks to pass through to the grid cells */
+  z-index: 4;
 }
 
 /*-------------------------Toggle button---------------------------*/
