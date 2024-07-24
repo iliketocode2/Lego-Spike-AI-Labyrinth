@@ -50,22 +50,24 @@
             <!--<button id="stop">Stop the simulation</button>-->
         </div>
         <div class="box right" style="text-align: center;">
-
-            <!--<div class="sim-frame">
-                <div id="simulation" class="simulation">
-                    <canvas id="gridCanvas"></canvas>
-                </div>
-            </div>-->
             <h3 id="update-text"></h3>
-            <div class="sim-frame-frame">
-                <div class="sim-frame">
-                    <div id="simulation" class="simulation">
-                        <div id="grid-container"></div>
-                        <canvas id="animationCanvas"></canvas>
+
+            <div class="grid-container">
+                <button id="rotate-ccw" class="rotate-btn">↺</button>
+                <div class="sim-frame-frame">
+                    <div class="sim-frame">
+                        <div id="simulation" class="simulation">
+                            <div id="grid-container"></div>
+                            <canvas id="animationCanvas"></canvas>
+                            <div id="direction-indicator">↑</div>
+                        </div>
                     </div>
                 </div>
+                <button id="rotate-cw" class="rotate-btn">↻</button>
             </div>
+
             <br>
+            
             <div class="toggle-switch" id="toggleMode" onclick="window.toggleBallControlMode()">
                 <div class="slider">
                     <span class="icon coordinate-icon">x, y</span>

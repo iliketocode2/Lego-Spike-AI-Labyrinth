@@ -3,7 +3,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const COLS = 5;
     let walls = [];
     let nodes = [];
-    
+    let gridRotation = 0;
+    let startSquare = null;
+    let endSquare = null;
+    let isSelectingStart = false;
+    let isSelectingEnd = false;
+    let gameStarted = false;
+
     const ctx = setupCanvas();
     const CANVAS_WIDTH = ctx.canvas.width;
     const CANVAS_HEIGHT = ctx.canvas.height;
@@ -11,24 +17,69 @@ document.addEventListener('DOMContentLoaded', function() {
     let ballX = CANVAS_WIDTH / 2;
     let ballY = CANVAS_HEIGHT / 2;
     let ballRotation = 0;
-    let lastPitch = 0;
-    let lastRoll = 0;
-    let lastYaw = 0;
     let velocityX = 0;
     let velocityY = 0;
+    let lastPitch = 0;
+    let lastRoll = 0;
+    let pitch = 0;
+    let roll = 0;
+
     const GRAVITY = 9.81;
     const FRICTION = 0.83; // reversed: 1 is no friction, 0 is all friction
     const MIN_TILT_ANGLE = 0.005; // minimum tilt angle to overcome static friction (in radians)
-    const RESTITUTION = 0.9; // Coefficient of restitution for bouncing
-    // const ENERGY_LOSS = 0.2;
-    let startSquare = null;
-    let endSquare = null;
-    let isSelectingStart = false;
-    let isSelectingEnd = false;
-    let gameStarted = false;
+    const RESTITUTION = 0.9; // bouncing off wall amount
+
     window.ballControlMode = 'coordinates';
 
-    //--------------------------------- Start and End grid loop setup ---------------------------------
+//--------------------------------- Basic Helper Functions ---------------------------------
+
+    function setupCanvas() {
+        const canvas = document.getElementById('animationCanvas');
+        const simulation = document.getElementById('simulation');
+        canvas.width = simulation.offsetWidth;
+        canvas.height = simulation.offsetHeight;
+        return canvas.getContext('2d');
+    }
+
+    function rotateCoordinates(row, col) {
+        switch(gridRotation) {
+            case 0: return [row, col];
+            case 90: return [col, ROWS - 1 - row];
+            case 180: return [ROWS - 1 - row, COLS - 1 - col];
+            case 270: return [COLS - 1 - col, row];
+        }
+    }
+
+    function unrotateCoordinates(row, col) {
+        switch(gridRotation) {
+            case 0: return [row, col];
+            case 90: return [COLS - 1 - col, row];
+            case 180: return [ROWS - 1 - row, COLS - 1 - col];
+            case 270: return [col, ROWS - 1 - row];
+        }
+    }
+
+    function promptUser(message) {
+        document.getElementById('update-text').innerHTML = message;
+    }
+
+    function handleSquareClick(event) {
+        const square = event.target;
+        if (isSelectingStart) {
+            setStartSquare(square);
+        } else if (isSelectingEnd) {
+            setEndSquare(square);
+        }
+    }
+
+    //map a value from one range to another: this formula normalizes the input value to a 0-1 range based on inMin and inMax, 
+    //then scales it to the output range based on outMin and outMax, and finally shifts it to the correct position within the output range.
+    //ex: [10, 20] on the range [0, 100]. for input of '15', it would be (15 - 10) * (100 - 0) / (20 - 10) + 0 = 50
+    function mapRange(value, inMin, inMax, outMin, outMax) {
+        return (value - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
+    }
+
+//--------------------------------- Initialize game: start & end square, ball init, game end condition ---------------------------------
 
     function initializeGame() {
         startSquare = null;
@@ -37,19 +88,6 @@ document.addEventListener('DOMContentLoaded', function() {
         isSelectingEnd = false;
         gameStarted = false;
         promptUser("Select the start square");
-    }
-    
-    function promptUser(message) {
-        document.getElementById('update-text').innerHTML = message;
-    }
-    
-    function handleSquareClick(event) {
-        const square = event.target;
-        if (isSelectingStart) {
-            setStartSquare(square);
-        } else if (isSelectingEnd) {
-            setEndSquare(square);
-        }
     }
     
     function setStartSquare(square) {
@@ -64,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function() {
         isSelectingEnd = true;
         promptUser("Select the end square");
     }
-    
+
     function setEndSquare(square) {
         if (endSquare) {
             endSquare.classList.remove('end');
@@ -81,19 +119,22 @@ document.addEventListener('DOMContentLoaded', function() {
     function initializeBall() {
         const cellWidth = CANVAS_WIDTH / COLS;
         const cellHeight = CANVAS_HEIGHT / ROWS;
-        ballX = (parseInt(startSquare.dataset.col) + 0.5) * cellWidth;
-        ballY = (parseInt(startSquare.dataset.row) + 0.5) * cellHeight;
+        const [startRow, startCol] = unrotateCoordinates(parseInt(startSquare.dataset.row), parseInt(startSquare.dataset.col));
+        ballX = (startCol + 0.5) * cellWidth;
+        ballY = (startRow + 0.5) * cellHeight;
         velocityX = 0;
         velocityY = 0;
         ballRotation = 0;
         gameStarted = true;
+        animate();
     }
     
     function checkEndReached() {
         const cellWidth = CANVAS_WIDTH / COLS;
         const cellHeight = CANVAS_HEIGHT / ROWS;
-        const endX = (parseInt(endSquare.dataset.col) + 0.5) * cellWidth;
-        const endY = (parseInt(endSquare.dataset.row) + 0.5) * cellHeight;
+        const [endRow, endCol] = unrotateCoordinates(parseInt(endSquare.dataset.row), parseInt(endSquare.dataset.col));
+        const endX = (endCol + 0.5) * cellWidth;
+        const endY = (endRow + 0.5) * cellHeight;
         
         const distance = Math.sqrt(Math.pow(ballX - endX, 2) + Math.pow(ballY - endY, 2));
         if (distance < BALL_RADIUS * 2) {
@@ -106,13 +147,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    //----------------------------------------------- Grid and Node Setup ------------------------------------------------
+//----------------------------------------------- Grid and Node Setup ------------------------------------------------
 
-    function createGrid(rows, cols) { // initialize grid properties and divs
+    function createGrid(rows, cols) {
         const gridContainer = document.getElementById('grid-container');
         gridContainer.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
         gridContainer.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
-    
+
         for (let i = 0; i < rows; i++) {
             for (let j = 0; j < cols; j++) {
                 const cell = document.createElement('div');
@@ -123,15 +164,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 gridContainer.appendChild(cell);
             }
         }
-    
+        createNodes(gridContainer, rows, cols);
+    }
+
+    function createNodes(gridContainer, rows, cols) {
         for (let i = 0; i <= rows; i++) {
             for (let j = 0; j <= cols; j++) {
                 const node = document.createElement('div');
                 node.classList.add('grid-node');
-                node.style.gridRow = i + 1;
-                node.style.gridColumn = j + 1;
-                node.dataset.row = i;
-                node.dataset.col = j;
+                updateNodePosition(node, i, j);
                 
                 // Check if the node is on the perimeter
                 if (i === 0 || i === rows || j === 0 || j === cols) {
@@ -140,7 +181,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 node.addEventListener('click', toggleNodeSelection);
                 gridContainer.appendChild(node);
-    
+
                 // Store node positions for collision detection
                 nodes.push({
                     x: j * CANVAS_WIDTH / cols,
@@ -151,32 +192,17 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function drawGrid() {
-        const cellWidth = CANVAS_WIDTH / COLS;
-        const cellHeight = CANVAS_HEIGHT / ROWS;
-    
-        ctx.strokeStyle = '#ccc';
-        ctx.lineWidth = 1;
-    
-        for (let i = 0; i <= ROWS; i++) {
-            ctx.beginPath();
-            ctx.moveTo(0, i * cellHeight);
-            ctx.lineTo(CANVAS_WIDTH, i * cellHeight);
-            ctx.stroke();
-        }
-    
-        for (let j = 0; j <= COLS; j++) {
-            ctx.beginPath();
-            ctx.moveTo(j * cellWidth, 0);
-            ctx.lineTo(j * cellWidth, CANVAS_HEIGHT);
-            ctx.stroke();
-        }
-    }
-    
     function toggleNodeSelection(event) {
         const node = event.target;
         node.classList.toggle('selected');
         checkForWalls(node);
+    }
+
+    function updateNodePosition(node, row, col) {
+        node.style.gridRow = row + 1;
+        node.style.gridColumn = col + 1;
+        node.dataset.row = row;
+        node.dataset.col = col;
     }
 
     function checkForWalls(node) {
@@ -222,74 +248,104 @@ document.addEventListener('DOMContentLoaded', function() {
         );
     }
 
-    function setupCanvas() {
-        const canvas = document.getElementById('animationCanvas');
-        const simulation = document.getElementById('simulation');
-        canvas.width = simulation.offsetWidth;
-        canvas.height = simulation.offsetHeight;
-        return canvas.getContext('2d');
-    }
-    
-    createGrid(ROWS, COLS);
+//--------------------------------- Rotate Grid counterclockwise or clockwise ---------------------------------
 
-    //--------------------------------- Ball Simulation and Canvas Setup ---------------------------------
-    
-
-    function drawBall(x, y) {
-        // main circle
-        ctx.beginPath();
-        ctx.arc(x, y, BALL_RADIUS, 0, Math.PI * 2);
-        ctx.fillStyle = 'red';
-        ctx.fill();
-    
-        // shading to give 3D effect
-        const gradient = ctx.createRadialGradient(
-            x - BALL_RADIUS / 3, y - BALL_RADIUS / 3, BALL_RADIUS / 10,
-            x, y, BALL_RADIUS
-        );
-        gradient.addColorStop(0, 'white');
-        gradient.addColorStop(1, 'red');
-    
-        ctx.beginPath();
-        ctx.arc(x, y, BALL_RADIUS, 0, Math.PI * 2);
-        ctx.fillStyle = gradient;
-        ctx.fill();
-    
-        // small circle to visualize rotation of the ball
-        ctx.beginPath();
-        ctx.arc(x + Math.cos(ballRotation) * BALL_RADIUS / 2, 
-                y + Math.sin(ballRotation) * BALL_RADIUS / 2, 
-                BALL_RADIUS / 5, 0, Math.PI * 2);
-        ctx.fillStyle = '#fcd3d2';
-        ctx.fill();
-    }
-
-    //for my particular setup, the coordinates I am recieving from the openMV program need to be scaled to match the grid on the webpage to match my 'forward' direction
-    //so here I define the OpenMV camera's coordinates for the grid corners (place the ball in each corner of the grid and see what the openMV cam registers)
-    const cameraCorners = {
-        bottomRight: { x: 267, y: 22 },
-        topRight: { x: 267, y: 210 },
-        topLeft: { x: 77, y: 210 },
-        bottomLeft: { x: 77, y: 22 }
-    };
-
-    window.drawBall = function(x, y) {
-        if (window.ballControlMode === 'coordinates' && gameStarted) {
-            //map the camera coordinates to canvas coordinates
-            const canvasX = mapRange(x, cameraCorners.topRight.x, cameraCorners.topLeft.x, 0, CANVAS_WIDTH);
-            const canvasY = mapRange(y, cameraCorners.topLeft.y, cameraCorners.bottomLeft.y, 0, CANVAS_HEIGHT);
-
-            //ensure the ball stays within the canvas boundaries
-            ballX = Math.max(BALL_RADIUS, Math.min(CANVAS_WIDTH - BALL_RADIUS, canvasX));
-            ballY = Math.max(BALL_RADIUS, Math.min(CANVAS_HEIGHT - BALL_RADIUS, canvasY));
+    function rotateGrid(direction) {
+        if (direction === 'cw') {
+            gridRotation = (gridRotation + 90) % 360;
+        } else {
+            gridRotation = (gridRotation - 90 + 360) % 360;
         }
-    };
+        updateDirectionIndicator();
+        rotateNodes();
+        rotateStartEndSquares();
+        redrawCanvas();
+    }
 
-    //map a value from one range to another: this formula normalizes the input value to a 0-1 range based on inMin and inMax, 
-    //then scales it to the output range based on outMin and outMax, and finally shifts it to the correct position within the output range.
-    //ex: [10, 20] on the range [0, 100]. for input of '15', it would be (15 - 10) * (100 - 0) / (20 - 10) + 0 = 50
-    function mapRange(value, inMin, inMax, outMin, outMax) {
-        return (value - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
+    function rotateNodes() {
+        const gridContainer = document.getElementById('grid-container');
+        const nodeElements = gridContainer.querySelectorAll('.grid-node');
+        
+        nodeElements.forEach(node => {
+            const oldRow = parseInt(node.dataset.row);
+            const oldCol = parseInt(node.dataset.col);
+            const [newRow, newCol] = rotateCoordinates(oldRow, oldCol);
+            updateNodePosition(node, newRow, newCol);
+        });
+    }
+
+    function rotateStartEndSquares() {
+        if (startSquare) {
+            const [newRow, newCol] = rotateCoordinates(parseInt(startSquare.dataset.row), parseInt(startSquare.dataset.col));
+            startSquare.classList.remove('start');
+            startSquare.textContent = '';
+            startSquare = document.querySelector(`.grid-cell[data-row="${newRow}"][data-col="${newCol}"]`);
+            startSquare.classList.add('start');
+            startSquare.textContent = 'Start';
+        }
+        
+        if (endSquare) {
+            const [newRow, newCol] = rotateCoordinates(parseInt(endSquare.dataset.row), parseInt(endSquare.dataset.col));
+            endSquare.classList.remove('end');
+            endSquare.textContent = '';
+            endSquare = document.querySelector(`.grid-cell[data-row="${newRow}"][data-col="${newCol}"]`);
+            endSquare.classList.add('end');
+            endSquare.textContent = 'End';
+        }
+    }
+    
+    function updateDirectionIndicator() {
+        const indicator = document.getElementById('direction-indicator');
+        indicator.innerHTML = ['↑', '→', '↓', '←'][gridRotation / 90];
+    }
+
+
+//----------------------------------------Canvas Setup/Drawing----------------------------------------
+    
+    function redrawCanvas() {
+        ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        ctx.save();
+        ctx.translate(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
+        ctx.rotate(gridRotation * Math.PI / 180);
+        ctx.translate(-CANVAS_WIDTH / 2, -CANVAS_HEIGHT / 2);
+
+        drawGrid();
+        drawWalls();
+
+        ctx.restore();
+
+        if (gameStarted) {
+            if (window.ballControlMode === 'sensors'){
+                moveCircle(lastPitch, lastRoll);
+                drawTiltIndicator(pitch, roll);
+            }
+            else{
+                drawBall(ballX, ballY);
+            }
+            checkEndReached();
+        }
+    }
+
+    function drawGrid() {
+        const cellWidth = CANVAS_WIDTH / COLS;
+        const cellHeight = CANVAS_HEIGHT / ROWS;
+    
+        ctx.strokeStyle = '#ccc';
+        ctx.lineWidth = 1;
+    
+        for (let i = 0; i <= ROWS; i++) {
+            ctx.beginPath();
+            ctx.moveTo(0, i * cellHeight);
+            ctx.lineTo(CANVAS_WIDTH, i * cellHeight);
+            ctx.stroke();
+        }
+    
+        for (let j = 0; j <= COLS; j++) {
+            ctx.beginPath();
+            ctx.moveTo(j * cellWidth, 0);
+            ctx.lineTo(j * cellWidth, CANVAS_HEIGHT);
+            ctx.stroke();
+        }
     }
 
     function drawWalls() {
@@ -306,106 +362,124 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    function moveCircle(pitch, roll, yaw) {
-        ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    //for my particular setup, the coordinates I am recieving from the openMV program need to be scaled to match the grid on the webpage to match my 'forward' direction
+    //so here I define the OpenMV camera's coordinates for the grid corners (place the ball in each corner of the grid and see what the openMV cam registers)
+    const cameraCorners = {
+        bottomRight: { x: 267, y: 22 },
+        topRight: { x: 267, y: 210 },
+        topLeft: { x: 77, y: 210 },
+        bottomLeft: { x: 77, y: 22 }
+    };
 
-        //control ball position
-        if (window.ballControlMode === 'sensors' && gameStarted) {
-            
-            let tiltX = Math.sin(roll);
-            let tiltY = Math.sin(pitch);
+    function drawBall(x, y) {
+        const rotatedPoint = rotatePoint(x, y, -gridRotation);
         
-            let rotatedTiltX = tiltX * Math.cos(yaw) - tiltY * Math.sin(yaw);
-            let rotatedTiltY = tiltX * Math.sin(yaw) + tiltY * Math.cos(yaw);
-        
-            let tiltMagnitude = Math.sqrt(rotatedTiltX * rotatedTiltX + rotatedTiltY * rotatedTiltY);
-        
-            // Check if tilt exceeds the minimum angle to overcome static friction
-            if (tiltMagnitude > MIN_TILT_ANGLE) {
-                let accX = rotatedTiltX * GRAVITY;
-                let accY = rotatedTiltY * GRAVITY;
-        
-                velocityX += accX;
-                velocityY += accY;
-        
-                velocityX *= FRICTION;
-                velocityY *= FRICTION;
-        
-                let newX = ballX + velocityX;
-                let newY = ballY + velocityY;
-        
-                // Check for wall collisions
-                let collided = handleWallCollisions(newX, newY);
-        
-                // If no collision occurred, update ball position
-                if (!collided) {
-                    ballX = newX;
-                    ballY = newY;
-                }
-        
-                // Check for node collisions
-                handleNodeCollisions(ballX, ballY);
-        
-                // Keep ball within canvas bounds (with bounce)
-                handleBoundaryCollisions();
-        
-                const distanceMoved = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
-                ballRotation += distanceMoved / BALL_RADIUS;
-        
-                if (Math.abs(velocityX) < 0.01) velocityX = 0;
-                if (Math.abs(velocityY) < 0.01) velocityY = 0;
-            } 
-            else {
-                // Ball doesn't move due to static friction
-                velocityX = 0;
-                velocityY = 0;
-            }
-        }
+        ctx.beginPath();
+        ctx.arc(rotatedPoint.x, rotatedPoint.y, BALL_RADIUS, 0, Math.PI * 2);
+        ctx.fillStyle = 'red';
+        ctx.fill();
 
-        drawGrid();
-        drawWalls();
+        const gradient = ctx.createRadialGradient(
+            rotatedPoint.x - BALL_RADIUS / 3, rotatedPoint.y - BALL_RADIUS / 3, BALL_RADIUS / 10,
+            rotatedPoint.x, rotatedPoint.y, BALL_RADIUS
+        );
+        gradient.addColorStop(0, 'white');
+        gradient.addColorStop(1, 'red');
+    
+        ctx.beginPath();
+        ctx.arc(rotatedPoint.x, rotatedPoint.y, BALL_RADIUS, 0, Math.PI * 2);
+        ctx.fillStyle = gradient;
+        ctx.fill();
 
-        if (gameStarted) {
-            drawBall(ballX, ballY);
-            checkEndReached();
-            if (window.ballControlMode === 'sensors') {
-                drawTiltIndicator(pitch, roll, yaw);
-            }
-        }
+        ctx.beginPath();
+        ctx.arc(rotatedPoint.x + Math.cos(ballRotation) * BALL_RADIUS / 2, 
+                rotatedPoint.y + Math.sin(ballRotation) * BALL_RADIUS / 2, 
+                BALL_RADIUS / 5, 0, Math.PI * 2);
+        ctx.fillStyle = '#fcd3d2';
+        ctx.fill();
     }
 
-    function handleWallCollisions(newX, newY) {
-        const cellWidth = CANVAS_WIDTH / COLS;
-        const cellHeight = CANVAS_HEIGHT / ROWS;
-        let collided = false;
-        
-        walls.forEach(wall => {
-            const x1 = wall.x1 * cellWidth;
-            const y1 = wall.y1 * cellHeight;
-            const x2 = wall.x2 * cellWidth;
-            const y2 = wall.y2 * cellHeight;
-            
-            if (lineCircleCollision(x1, y1, x2, y2, newX, newY, BALL_RADIUS)) {
-                collided = true;
-                const wallVector = {x: x2 - x1, y: y2 - y1};
-                const wallLength = Math.sqrt(wallVector.x * wallVector.x + wallVector.y * wallVector.y);
-                const normal = {x: -wallVector.y / wallLength, y: wallVector.x / wallLength};
+    function rotatePoint(x, y, angle) {
+        const centerX = CANVAS_WIDTH / 2;
+        const centerY = CANVAS_HEIGHT / 2;
+        const radians = angle * Math.PI / 180;
+        const cos = Math.cos(radians);
+        const sin = Math.sin(radians);
+        const nx = (cos * (x - centerX)) + (sin * (y - centerY)) + centerX;
+        const ny = (cos * (y - centerY)) - (sin * (x - centerX)) + centerY;
+        return { x: nx, y: ny };
+    }
 
-                // Calculate the dot product of velocity and normal
-                const dot = velocityX * normal.x + velocityY * normal.y;
+//--------------------------------- ball calculation for physics, call drawBall, and interaction on canvas ---------------------------------
 
-                // Reverse velocity and apply energy loss
-                velocityX = (velocityX - 2 * dot * normal.x) * RESTITUTION;
-                velocityY = (velocityY - 2 * dot * normal.y) * RESTITUTION;
+    function moveCircle(pitch, roll) {
+        if (!gameStarted) return; //prevent overriding the ball position
 
-                // Move the ball to just touch the wall
-                const distanceToWall = distancePointToLine(ballX, ballY, x1, y1, x2, y2) - BALL_RADIUS;
-                ballX -= distanceToWall * normal.x;
-                ballY -= distanceToWall * normal.y;
+        ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+        // Adjust tilt based on grid rotation
+        let adjustedPitch = pitch;
+        let adjustedRoll = roll;
+        switch(gridRotation) {
+            case 90:
+                adjustedPitch = roll;
+                adjustedRoll = -pitch;
+                break;
+            case 180:
+                adjustedPitch = -pitch;
+                adjustedRoll = -roll;
+                break;
+            case 270:
+                adjustedPitch = -roll;
+                adjustedRoll = pitch;
+                break;
+        }
+
+        let tiltX = Math.sin(adjustedRoll);
+        let tiltY = Math.sin(adjustedPitch);
+    
+        let tiltMagnitude = Math.sqrt(tiltX * tiltX + tiltY * tiltY);
+    
+        // Check if tilt exceeds the minimum angle to overcome static friction
+        if (tiltMagnitude > MIN_TILT_ANGLE) {
+            let accX = rotatedTiltX * GRAVITY;
+            let accY = rotatedTiltY * GRAVITY;
+    
+            velocityX += accX;
+            velocityY += accY;
+    
+            velocityX *= FRICTION;
+            velocityY *= FRICTION;
+    
+            let newX = ballX + velocityX;
+            let newY = ballY + velocityY;
+    
+            // Check for wall collisions
+            let collided = handleWallCollisions(newX, newY);
+    
+            // If no collision occurred, update ball position
+            if (!collided) {
+                ballX = newX;
+                ballY = newY;
             }
-        });
-
-        return collided;
+    
+            // Check for node collisions
+            handleNodeCollisions(ballX, ballY);
+    
+            // Keep ball within canvas bounds (with bounce)
+            handleBoundaryCollisions();
+    
+            const distanceMoved = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
+            ballRotation += distanceMoved / BALL_RADIUS;
+    
+            if (Math.abs(velocityX) < 0.01) velocityX = 0;
+            if (Math.abs(velocityY) < 0.01) velocityY = 0;
+        } 
+        else {
+            // Ball doesn't move due to static friction
+            velocityX = 0;
+            velocityY = 0;
+        }
     }
 
     function handleWallCollisions(newX, newY) {
@@ -536,47 +610,40 @@ document.addEventListener('DOMContentLoaded', function() {
         return Math.sqrt(dx * dx + dy * dy);
     }
 
-    // Function to draw an indicator showing tilt direction
-    function drawTiltIndicator(pitch, roll, yaw) {
-        const radius = BALL_RADIUS * 2; // You can adjust this multiplier as needed
-    
-        // Calculate tilt direction
+//----------------------------------- Other canvas drawing -----------------------------------
+
+    function drawTiltIndicator(pitch, roll) {
+        const radius = BALL_RADIUS * 2;
         let tiltX = Math.sin(roll);
         let tiltY = Math.sin(pitch);
     
-        // Rotate tilt direction based on yaw
-        let rotatedTiltX = tiltX * Math.cos(yaw) - tiltY * Math.sin(yaw);
-        let rotatedTiltY = tiltX * Math.sin(yaw) + tiltY * Math.cos(yaw);
+        // Adjust tilt direction based on grid rotation
+        switch(gridRotation) {
+            case 90:
+                [tiltX, tiltY] = [-tiltY, tiltX];
+                break;
+            case 180:
+                [tiltX, tiltY] = [-tiltX, -tiltY];
+                break;
+            case 270:
+                [tiltX, tiltY] = [tiltY, -tiltX];
+                break;
+        }
     
-        // Draw tilt direction line
+        const rotatedBallPos = rotatePoint(ballX, ballY, -gridRotation);
+    
         ctx.beginPath();
-        ctx.moveTo(ballX, ballY);
-        ctx.lineTo(ballX + rotatedTiltX * radius, ballY + rotatedTiltY * radius);
+        ctx.moveTo(rotatedBallPos.x, rotatedBallPos.y);
+        ctx.lineTo(rotatedBallPos.x + tiltX * radius, rotatedBallPos.y + tiltY * radius);
         ctx.strokeStyle = 'blue';
         ctx.lineWidth = 2;
         ctx.stroke();
-    
-        // Draw line indicating the "forward" direction
-        ctx.beginPath();
-        ctx.moveTo(ballX, ballY);
-        ctx.lineTo(ballX + Math.sin(yaw) * radius, ballY - Math.cos(yaw) * radius);
-        ctx.strokeStyle = 'red';
-        ctx.lineWidth = 2;
-        ctx.stroke();
     }
 
-    function animate() {
-        moveCircle(lastPitch, lastRoll, lastYaw);
-        requestAnimationFrame(animate);
-    }
+//--------------------------------- Event Listeners and Initialization -------------------------------
 
-    window.updateAngles = function(pitch, roll, yaw) {
-        lastPitch = pitch;
-        lastRoll = roll;
-        lastYaw = yaw;
-    };
+    //change the mode of the button beneath the grid: modes switch between x, y control and yaw, pitch, and roll control
 
-    //change mode and button between x, y control and yaw, pitch, and roll control
     window.toggleBallControlMode = function() {
         const toggle = document.getElementById('toggleMode');
         const slider = toggle.querySelector('.slider');
@@ -597,20 +664,35 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
     
-    // Add this function to your JavaScript
     window.updateBallPosition = function(x, y) {
         if (window.ballControlMode === 'coordinates') {
-            window.drawBall(x, y);
+            //map the camera coordinates to canvas coordinates
+            const canvasX = mapRange(x, cameraCorners.topRight.x, cameraCorners.topLeft.x, 0, CANVAS_WIDTH);
+            const canvasY = mapRange(y, cameraCorners.topLeft.y, cameraCorners.bottomLeft.y, 0, CANVAS_HEIGHT);
+
+            //ensure the ball stays within the canvas boundaries
+            ballX = Math.max(BALL_RADIUS, Math.min(CANVAS_WIDTH - BALL_RADIUS, canvasX));
+            ballY = Math.max(BALL_RADIUS, Math.min(CANVAS_HEIGHT - BALL_RADIUS, canvasY));
         }
     };
     
-    // Add this function to your JavaScript
-    window.updateBallTilt = function(pitch, roll, yaw) {
+    window.updateBallTilt = function(pitch, roll) {
         if (window.ballControlMode === 'sensors') {
-            window.updateAngles(pitch, roll, yaw);
+            lastPitch = pitch;
+            lastRoll = roll;
         }
     };
 
-    animate();
+    document.getElementById('rotate-cw').addEventListener('click', () => rotateGrid('cw'));
+    document.getElementById('rotate-ccw').addEventListener('click', () => rotateGrid('ccw'));
+
+    createGrid(ROWS, COLS);
+    
+    // Animation Loop
+    function animate() {
+        redrawCanvas();
+        requestAnimationFrame(animate);
+    }
+
     initializeGame();
 });

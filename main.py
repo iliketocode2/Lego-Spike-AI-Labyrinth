@@ -135,9 +135,8 @@ def received_ble(data):
             # from decidegrees convert to radians 
             pitch_rad = (pitch / 10) * (math.pi / 180)
             roll_rad = (roll / 10) * (math.pi / 180) * -1
-            yaw_rad = (yaw / 10) * (math.pi / 180) * -1
-            window.updateBallTilt(pitch_rad, roll_rad, yaw_rad)
-        
+            window.updateBallTilt(pitch_rad, roll_rad)
+
 ble = ble_library.newBLE()
 ble.callback = received_ble
 
