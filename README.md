@@ -1,10 +1,12 @@
 <h1> Build and Program the AI Spike Labyrinth</h1>
-<h3>This project explores how different devices can connect to the Lego Spike Prime. It is also an exploration of various AI algorithms, from Q-learning to OpenMV's blob detection.</h3>
+<h3>This project explores how different devices can connect to the Lego Spike Prime (uart). It is also an exploration of various AI algorithms, from Q-learning to OpenMV's blob detection.</h3>
 
 ###
 
 <h2>DISCLAIMER</h2>
 <p>This project is not yet finished, I have yet to integrate the AI algorithms into the program and Spike Motor control to actually physically move the ball from the chosen start square to end square.</p>
+
+###
 
 <h5>Materials:</h5>
 <ul>
@@ -13,5 +15,7 @@
   <li>Visual Studio Code or another IDE to run pyscript on: Pyscript.com, Github Codespace with pyscript presetup, etc</li>
   <li>Lego Spike</li>
   <li>Plenty of lego beams, pins, and plates (I used a combination of about 3 spike kits worth of parts</li>
+  <li>Some cord to connect the Spike to your computer (typically usb to micro usb)</li>
   <li><a href="https://raw.githack.com/tuftsceeo/SPIKE-html/main/index.html">Custom firmware (for uart communication)</a></li>
+  <li><a href="https://github.com/chrisbuerginrogers/SPIKE_Prime/blob/main/BLE/BLE_CEEO.py#L1">BLE_CEEO.py</a> for establishing a bluetooth connection between your Spike and your computer</li>
 </ul>
