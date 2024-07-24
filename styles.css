@@ -167,21 +167,6 @@ progress::-moz-progress-bar {
 
 /*--------------------------------GRID-----------------------------*/
 
-/* .grid-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-} */
-
-/*claude code below*/
-/* .grid-container {
-  display: grid;
-  gap: 2px;
-  background-color: #3d3b34;
-  padding: 2px;
-  border-radius: 5px;
-} */
-
 .grid-container{
   display: flex;
   align-items: center;
@@ -387,4 +372,27 @@ progress::-moz-progress-bar {
   font-size: 24px;
   font-weight: 800;
   color: #3d3b34;
+}
+
+/*---------------------------------Popup---------------------------------*/
+.popup {
+  display: none;
+  position: absolute;
+  transform: translate(0%, 275%);
+  background-color: white;
+  border: 2px solid black;
+  padding: 20px;
+  z-index: 1000;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+.popup.fade-in {
+  display: block;
+  opacity: 1;
+}
+
+.popup.fade-out {
+  opacity: 0;
 }

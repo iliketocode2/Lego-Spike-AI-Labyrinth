@@ -1,15 +1,16 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const ROWS = 5;
-    const COLS = 5;
+    window.ROWS = 5;
+    window.COLS = 5;
     let walls = [];
     let nodes = [];
     let gridRotation = 0;
     let rotationDirection = '';
-    let startSquare = null;
-    let endSquare = null;
+    window.startSquare = null;
+    window.endSquare = null;
     let isSelectingStart = false;
     let isSelectingEnd = false;
-    let gameStarted = false;
+    window.simStarted = false;
+    window.gameStarted = false;
 
     const ctx = setupCanvas();
     const CANVAS_WIDTH = ctx.canvas.width;
@@ -45,9 +46,9 @@ document.addEventListener('DOMContentLoaded', function() {
     function unrotateCoordinates(row, col) {
         switch(gridRotation) {
             case 0: return [row, col];
-            case 90: return [COLS - 1 - col, row];
-            case 180: return [ROWS - 1 - row, COLS - 1 - col];
-            case 270: return [col, ROWS - 1 - row];
+            case 90: return [window.COLS - 1 - col, row];
+            case 180: return [window.ROWS - 1 - row, window.COLS - 1 - col];
+            case 270: return [col, window.ROWS - 1 - row];
         }
     }
 
@@ -74,67 +75,68 @@ document.addEventListener('DOMContentLoaded', function() {
 //--------------------------------- Initialize game: start & end square, ball init, game end condition ---------------------------------
 
     function initializeGame() {
-        startSquare = null;
-        endSquare = null;
+        window.startSquare = null;
+        window.endSquare = null;
         isSelectingStart = true;
         isSelectingEnd = false;
-        gameStarted = false;
+        window.gameStarted = false;
+        window.simStarted = false;
         promptUser("Select the start square and draw labyrinth walls");
     }
     
     function setStartSquare(square) {
-        if (startSquare) {
-            startSquare.classList.remove('start');
-            startSquare.textContent = '';
+        if (window.startSquare) {
+            window.startSquare.classList.remove('start');
+            window.startSquare.textContent = '';
         }
-        startSquare = square;
-        startSquare.classList.add('start');
-        startSquare.textContent = 'Start';
+        window.startSquare = square;
+        window.startSquare.classList.add('start');
+        window.startSquare.textContent = 'Start';
         isSelectingStart = false;
         isSelectingEnd = true;
         promptUser("Select the end square");
     }
 
     function setEndSquare(square) {
-        if (endSquare) {
-            endSquare.classList.remove('end');
-            endSquare.textContent = '';
+        if (window.endSquare) {
+            window.endSquare.classList.remove('end');
+            window.endSquare.textContent = '';
         }
-        endSquare = square;
-        endSquare.classList.add('end');
-        endSquare.textContent = 'End';
+        window.endSquare = square;
+        window.endSquare.classList.add('end');
+        window.endSquare.textContent = 'End';
         isSelectingEnd = false;
         promptUser("Move the ball to the end square");
         initializeBall();
     }
     
     function initializeBall() {
-        const cellWidth = CANVAS_WIDTH / COLS;
-        const cellHeight = CANVAS_HEIGHT / ROWS;
-        const [startRow, startCol] = unrotateCoordinates(parseInt(startSquare.dataset.row), parseInt(startSquare.dataset.col));
+        const cellWidth = CANVAS_WIDTH / window.COLS;
+        const cellHeight = CANVAS_HEIGHT / window.ROWS;
+        const [startRow, startCol] = unrotateCoordinates(parseInt(window.startSquare.dataset.row), parseInt(window.startSquare.dataset.col));
         ballX = (startCol + 0.5) * cellWidth;
         ballY = (startRow + 0.5) * cellHeight;
         velocityX = 0;
         velocityY = 0;
         ballRotation = 0;
-        gameStarted = true;
+        window.simStarted = true;
         animate();
     }
     
     function checkEndReached() {
-        const cellWidth = CANVAS_WIDTH / COLS;
-        const cellHeight = CANVAS_HEIGHT / ROWS;
-        const [endRow, endCol] = unrotateCoordinates(parseInt(endSquare.dataset.row), parseInt(endSquare.dataset.col));
+        const cellWidth = CANVAS_WIDTH / window.COLS;
+        const cellHeight = CANVAS_HEIGHT / window.ROWS;
+        const [endRow, endCol] = unrotateCoordinates(parseInt(window.endSquare.dataset.row), parseInt(window.endSquare.dataset.col));
         const endX = (endCol + 0.5) * cellWidth;
         const endY = (endRow + 0.5) * cellHeight;
         
         const distance = Math.sqrt(Math.pow(ballX - endX, 2) + Math.pow(ballY - endY, 2));
         if (distance < BALL_RADIUS * 2) {
             promptUser("Goal reached! Restarting the game.");
-            startSquare.classList.remove('start');
-            startSquare.textContent = '';
-            endSquare.classList.remove('end');
-            endSquare.textContent = '';
+            window.startSquare.classList.remove('start');
+            window.startSquare.textContent = '';
+            window.endSquare.classList.remove('end');
+            window.endSquare.textContent = '';
             initializeGame();
         }
     }
@@ -335,33 +337,33 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function rotateStartEndSquares() {
-        const gridSize = ROWS; // Assuming ROWS === COLS, otherwise use Math.max(ROWS, COLS)
+        const gridSize = window.ROWS; // Assuming window.ROWS === window.COLS, otherwise use Math.max(window.ROWS, window.COLS)
     
         if (startSquare) {
             const [newRow, newCol] = rotateCoordinates(
-                parseInt(startSquare.dataset.row),
-                parseInt(startSquare.dataset.col),
+                parseInt(window.startSquare.dataset.row),
+                parseInt(window.startSquare.dataset.col),
                 gridSize
             );
-            console.log('Rotating start square:', startSquare.dataset.row, startSquare.dataset.col, '->', newRow, newCol);
-            startSquare.classList.remove('start');
-            startSquare.textContent = '';
-            startSquare = document.querySelector(`.grid-cell[data-row="${newRow}"][data-col="${newCol}"]`);
-            startSquare.classList.add('start');
-            startSquare.textContent = 'Start';
+            console.log('Rotating start square:', window.startSquare.dataset.row, window.startSquare.dataset.col, '->', newRow, newCol);
+            window.startSquare.classList.remove('start');
+            window.startSquare.textContent = '';
+            window.startSquare = document.querySelector(`.grid-cell[data-row="${newRow}"][data-col="${newCol}"]`);
+            window.startSquare.classList.add('start');
+            window.startSquare.textContent = 'Start';
         }
-        if (endSquare) {
+        if (window.endSquare) {
             const [newRow, newCol] = rotateCoordinates(
-                parseInt(endSquare.dataset.row),
-                parseInt(endSquare.dataset.col),
+                parseInt(window.endSquare.dataset.row),
+                parseInt(window.endSquare.dataset.col),
                 gridSize
             );
 
-            endSquare.classList.remove('end');
-            endSquare.textContent = '';
-            endSquare = document.querySelector(`.grid-cell[data-row="${newRow}"][data-col="${newCol}"]`);
-            endSquare.classList.add('end');
-            endSquare.textContent = 'End';
+            window.endSquare.classList.remove('end');
+            window.endSquare.textContent = '';
+            window.endSquare = document.querySelector(`.grid-cell[data-row="${newRow}"][data-col="${newCol}"]`);
+            window.endSquare.classList.add('end');
+            window.endSquare.textContent = 'End';
         }
     }
     
@@ -385,7 +387,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
         ctx.restore();
     
-        if (gameStarted) {
+        if (window.gameStarted) {
             if (window.ballControlMode === 'sensors'){
                 moveCircle(lastPitch, lastRoll);
                 drawTiltIndicator(pitch, roll);
@@ -397,20 +399,20 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function drawGrid() {
-        const cellWidth = CANVAS_WIDTH / COLS;
-        const cellHeight = CANVAS_HEIGHT / ROWS;
+        const cellWidth = CANVAS_WIDTH / window.COLS;
+        const cellHeight = CANVAS_HEIGHT / window.ROWS;
     
         ctx.strokeStyle = '#ccc';
         ctx.lineWidth = 1;
     
-        for (let i = 0; i <= ROWS; i++) {
+        for (let i = 0; i <= window.ROWS; i++) {
             ctx.beginPath();
             ctx.moveTo(0, i * cellHeight);
             ctx.lineTo(CANVAS_WIDTH, i * cellHeight);
             ctx.stroke();
         }
     
-        for (let j = 0; j <= COLS; j++) {
+        for (let j = 0; j <= window.COLS; j++) {
             ctx.beginPath();
             ctx.moveTo(j * cellWidth, 0);
             ctx.lineTo(j * cellWidth, CANVAS_HEIGHT);
@@ -421,8 +423,8 @@ document.addEventListener('DOMContentLoaded', function() {
     function drawWalls() {
         ctx.strokeStyle = '#3d3b34';
         ctx.lineWidth = 6;
-        const cellWidth = CANVAS_WIDTH / COLS;
-        const cellHeight = CANVAS_HEIGHT / ROWS;
+        const cellWidth = CANVAS_WIDTH / window.COLS;
+        const cellHeight = CANVAS_HEIGHT / window.ROWS;
         
         walls.forEach(wall => {
             ctx.beginPath();
@@ -483,7 +485,7 @@ document.addEventListener('DOMContentLoaded', function() {
 //--------------------------------- ball calculation for physics, call drawBall, and interaction on canvas ---------------------------------
 
     function moveCircle(pitch, roll) {
-        if (!gameStarted) return; //prevent overriding the ball position
+        if (!window.gameStarted) return; //prevent overriding the ball position
 
         ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
@@ -553,8 +555,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function handleWallCollisions(newX, newY) {
-        const cellWidth = CANVAS_WIDTH / COLS;
-        const cellHeight = CANVAS_HEIGHT / ROWS;
+        const cellWidth = CANVAS_WIDTH / window.COLS;
+        const cellHeight = CANVAS_HEIGHT / window.ROWS;
         let collided = false;
         
         walls.forEach(wall => {
@@ -756,10 +758,14 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('rotate-cw').addEventListener('click', () => rotateGrid('cw'));
     document.getElementById('rotate-ccw').addEventListener('click', () => rotateGrid('ccw'));
 
-    createGrid(ROWS, COLS);
+    createGrid(window.ROWS, window.COLS);
     
     // Animation Loop
     function animate() {
+        if (window.simStarted){
+            startSim() //this function in pathCalc.js
+            simStarted = false;
+        }
         redrawCanvas();
         requestAnimationFrame(animate);
     }

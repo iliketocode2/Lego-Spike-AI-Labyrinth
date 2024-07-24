@@ -6,11 +6,12 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="stylesheet" href="https://pyscript.net/releases/2024.6.2/core.css">
     <script type="module" src="https://pyscript.net/releases/2024.6.2/core.js"></script>
-    <script src="script.js"></script>
     <script type="mpy" src="./main.py" config="./pyscript.toml"></script>
     <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
+    <script src="pathCalc.js"></script>
+    <script src="script.js"></script>
     <div class="flex-container">
         <div class="box left">
             <p>Make sure
@@ -73,6 +74,12 @@
                     <span class="icon coordinate-icon">x, y</span>
                     <span class="icon sensor-icon">y, p, r</span>
                 </div>
+            </div>
+
+            <div id="popup" class="popup">
+                <p>Would you like to find the path?</p>
+                <button id="yesButton">Yes</button>
+                <button id="noButton">No</button>
             </div>
         </div>
     </div>
