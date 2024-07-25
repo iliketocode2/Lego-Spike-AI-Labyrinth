@@ -8,10 +8,6 @@
 
 ###
 
-![spike labyrinth model render](https://github.com/user-attachments/assets/572d4f52-462e-4aab-9dce-a34d50dcdc79)
-
-###
-
 <h5>Materials:</h5>
 <ul>
   <li>OpenMV Cam (I used an R2) with converter connector on the back -- this will connect to the black section of a lego ultrasonic sensor</li>
@@ -33,3 +29,7 @@
   <li><a href="https://raw.githack.com/tuftsceeo/SPIKE-html/main/index.html">Custom firmware (for uart communication)</a></li>
   <li><a href="https://github.com/chrisbuerginrogers/SPIKE_Prime/blob/main/BLE/BLE_CEEO.py#L1">BLE_CEEO.py</a> for establishing a bluetooth connection between your Spike and your computer</li>
 </ul>
+
+###
+
+![spike labyrinth model render](https://github.com/user-attachments/assets/572d4f52-462e-4aab-9dce-a34d50dcdc79)
