@@ -17,8 +17,8 @@
   
   ### Software
   <ul>
-    <li>OpenMV IDE</li>
-    <li>Visual Studio Code or another IDE to run pyscript on: Pyscript.com, Github Codespace with pyscript presetup, etc</li>
+    <li><a href="https://openmv.io/pages/download">OpenMV IDE</a></li>
+    <li><a href="https://code.visualstudio.com/download">Visual Studio Code</a> or another IDE to run pyscript on: <a href="https://pyscript.com">Pyscript.com</a>, <a href="https://github.com/ntoll/codespaces-project-template-pyscript">Github Codespace with pyscript presetup</a>, etc</li>
     <li><a href="https://github.com/chrisbuerginrogers/SPIKE_Prime/blob/main/BLE/BLE_CEEO.py#L1">BLE_CEEO.py</a>: Download onto Spike Prime</li>
   </ul>
   
