@@ -6,37 +6,32 @@
 <p>This project is not yet finished as I have yet to write the AI algorithm that physically runs the lego motors to move the ball from the chosen start square to the end square. There are also many existing bugs. Feel free to create issues for this repository.</p>
 
 ## Materials
-  ### Hardware
-  <ul>
-    <li>Lego Spike</li>
-    <li>OpenMV Cam (I used an R2) with a <a href="https://www.instructables.com/Backpack-1-OpenMV-Camera/">custom PCB connector on the back</a> -- this will connect to the black section of a lego ultrasonic sensor</li>
-    <li><a href="https://www.brickowl.com/catalog/lego-spike-prime-set-45678/inventory">Lego pieces</a>: This model contains ~480 pieces</li>
-    <li><a href="https://www.brickowl.com/catalog/lego-red-hard-plastic-ball-52mm-22119-23065">A red Lego ball</a> (unless you change the openMV color detection/blob code)</li>
-    <li><a href="https://drive.google.com/file/d/1D8D3vNA3ystbz31rbjCMvUVYvHGMd4PP/view?usp=sharing">Instructions for the model I built</a></li>
-    <li>A cord to connect the Spike Prime to your computer (typically usb to micro usb)</li>
-  </ul>
+  - ### Hardware
+    - Lego Spike
+    - OpenMV Cam (I used an R2) with a [custom PCB connector on the back](https://www.instructables.com/Backpack-1-OpenMV-Camera/) -- this will connect to the black section of a lego ultrasonic sensor
+    - [Lego pieces](https://www.brickowl.com/catalog/lego-spike-prime-set-45678/inventory): This model contains ~480 pieces</li>
+    - [A red Lego ball](https://www.brickowl.com/catalog/lego-red-hard-plastic-ball-52mm-22119-23065) (unless you change the openMV color detection/blob code)</li>
+    - [Instructions for the model I built](https://drive.google.com/file/d/1D8D3vNA3ystbz31rbjCMvUVYvHGMd4PP/view?usp=sharing)
+    - A cord to connect the Spike Prime to your computer (typically usb to micro usb)
   
-  ### Software
-  <ul>
-    <li><a href="https://openmv.io/pages/download">OpenMV IDE</a></li>
-    <li><a href="https://code.visualstudio.com/download">Visual Studio Code</a> or another IDE to run Pyscript on: <a href="https://pyscript.com">Pyscript.com</a>, <a href="https://github.com/ntoll/codespaces-project-template-pyscript">Github Codespace with Pyscript presetup</a>, etc</li>
-    <li><a href="https://github.com/chrisbuerginrogers/SPIKE_Prime/blob/main/BLE/BLE_CEEO.py#L1">BLE_CEEO.py</a> -- Download this file onto Spike Prime using <a href="https://thonny.org/">Thonny</a>. This IDE is very effective at connecting micropython devices.</li>
-  </ul>
+  - ### Software
+    - [OpenMV IDE](https://openmv.io/pages/download)
+    - [Visual Studio Code](https://code.visualstudio.com/download) or another IDE to run Pyscript on: [Pyscript.com](https://pyscript.com), [Github Codespace with Pyscript presetup](https://github.com/ntoll/codespaces-project-template-pyscript), etc
+    - [BLE_CEEO.py](https://github.com/chrisbuerginrogers/SPIKE_Prime/blob/main/BLE/BLE_CEEO.py#L1) -- Download this file onto Spike Prime using [Thonny](https://thonny.org). This IDE is very effective at connecting micropython devices.
   
-  ### Firmware
-  <ul>
-    <li><a href="https://raw.githack.com/tuftsceeo/SPIKE-html/main/index.html">Custom firmware</a> -- Download onto Spike Prime</li>
-    <p>This firmware enables UART communication on the Spike Prime Hub. To restore the original firmware, open the official spike IDE (where you would normally write spike code) and click 'update hub'</p>
-  </ul>
+  - ### Firmware
+    - [Custom firmware](https://raw.githack.com/tuftsceeo/SPIKE-html/main/index.html) -- Download onto Spike Prime
+      - To install:
+        - Turn off the Spike Prime
+        - Hold down the bluetooth button until it strobes blue, green, pink
+        - Plug in the Spike to your computer
+        - Press 'Connect Up' and follow prompts to install the new firmware
+      This firmware enables UART communication on the Spike Prime Hub. To restore the original firmware, open the official spike IDE (where you would normally write spike code) and click 'update hub'
 
 ## Further Reading:
-<ul>
-  <li><a href="https://www.analog.com/en/resources/analog-dialogue/articles/uart-a-hardware-communication-protocol.html">UART</a></li>
-  <li><a href="https://spike.legoeducation.com/prime/help/lls-help-python#lls-help-python-spm">Lego Spike Prime Python Library</a></li>
-  <li><a href="https://docs.openmv.io">OpenMV docs</a></li>
-  <li><a href="https://www.datacamp.com/tutorial/introduction-q-learning-beginner-tutorial">Q-learning Explanation</a></li>
-</ul>
-
-###
+- [UART](https://www.analog.com/en/resources/analog-dialogue/articles/uart-a-hardware-communication-protocol.html)
+- [Lego Spike Prime Python Library](https://spike.legoeducation.com/prime/help/lls-help-python#lls-help-python-spm)
+- [OpenMV docs](https://docs.openmv.io)
+- [Q-learning Explanation](https://www.datacamp.com/tutorial/introduction-q-learning-beginner-tutorial)
 
 ![spike labyrinth model render](https://github.com/user-attachments/assets/572d4f52-462e-4aab-9dce-a34d50dcdc79)
