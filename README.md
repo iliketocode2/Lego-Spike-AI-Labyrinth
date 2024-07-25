@@ -5,7 +5,7 @@
 ###
 
 <h2>DISCLAIMER</h2>
-<p>This project is not yet finished, I have yet to write the AI algorithm that has the Spike run physically run motors to move the ball from the chosen start square to the end square.</p>
+<p>This project is not yet finished as I have yet to write the AI algorithm that has physically runs the lego motors to move the ball from the chosen start square to the end square.</p>
 
 ###
 
