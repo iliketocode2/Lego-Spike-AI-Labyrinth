@@ -14,7 +14,7 @@
   <li>OpenMV IDE</li>
   <li>Visual Studio Code or another IDE to run pyscript on: Pyscript.com, Github Codespace with pyscript presetup, etc</li>
   <li>Lego Spike</li>
-  <li>Lego pieces (I used a combination of about 3 spike kits worth of parts)</li>
+  <li><a href="https://www.brickowl.com/catalog/lego-spike-prime-set-45678/inventory">Lego pieces</a> (I used a combination of about 3 spike kits worth of parts)</li>
     <ul>
       <li>Two large Spike Motors</li>
       <li>One Spike Prime Hub</li>
