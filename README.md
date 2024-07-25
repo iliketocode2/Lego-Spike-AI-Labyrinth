@@ -8,6 +8,11 @@
 ## Communication Overview
 ![commnication flow chart](https://github.com/user-attachments/assets/9fabc1e3-81ef-417d-94d6-e6918032a667)
 
+## Website Overview
+The website features two primary modes: Free Play mode and AI mode. Within Free Play mode there are two sub modes: (x, y) mapping and (pitch, roll) mapping. 
+- To enter Free Play mode, draw labyrinth walls, select a start and end square, and select ‘no’ when the popup prompts you to draw the path. Then, to toggle between (x, y) and (pitch, roll) mode, change the toggle on the bottom of the screen. The (x, y) mode uses coordinates sent from the script running on the OpenMV camera to move the animated ball. The (pitch, roll) mode uses pitch and roll data from the Spike to simulate the location of the ball (basically running a physics simulation).
+- To enter AI mode draw labyrinth walls, select a start and end square, and select ‘yes’ when the popup prompts you to draw the path. The spike will move the ball from the start square to the end square soon after (this part yet to be implemented).
+If the orientation of your screen compared to the physical device you build is off, simply rotate the on-screen grid by pressing the arrow button on either side of the grid. 
 
 ## Materials
   - ### Hardware
