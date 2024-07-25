@@ -31,7 +31,8 @@
         3. Plug in the Spike to your computer
         4. Press 'Connect Up' and follow prompts to install the new firmware
     
-    This firmware enables UART communication on the Spike Prime Hub. To restore the original firmware, open the official spike IDE (where you would normally write spike code) and click 'update hub'
+    > [!IMPORTANT]
+    > This firmware enables UART communication on the Spike Prime Hub. To restore the original firmware, open the official spike IDE (where you would normally write spike code) and click 'update hub'. Also note that while this firmware is generally excellent, there is a slight bug with the motors that causes oscillation on remote disconnect. This should NOT affect this project.
 
 ## Further Reading
 - [UART](https://www.analog.com/en/resources/analog-dialogue/articles/uart-a-hardware-communication-protocol.html)
