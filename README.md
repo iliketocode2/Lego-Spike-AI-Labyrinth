@@ -1,6 +1,6 @@
 # Build and Program the AI Spike Labyrinth
 <h3>OpenMV & Uart, Q-learning, Bluetooth, and Pyscript (With extra js)</h3>
-<p>The goal of this project was to explore potential roles for the Lego Spike Prime in a system with external devices and heavy computation and graphical display. Now, this repository contains all of the code and instruction necessary for you to recreate a similar project should you choose to do so. In addition if you are looking here for specific Spike-related processes (such as connecting to the Spike with bluetooth or using pyscript with the Spike in general) parts of my code feature comments and explanation of these applications.</p>
+<p>The goal of this project was to explore potential roles for the Lego Spike Prime in a system with external devices and heavy computation and graphical display. This repository contains all of the code and instruction necessary for you to recreate a similar project should you choose to do so. In addition if you are looking here for specific Spike-related processes (such as connecting to the Spike with bluetooth or using Pyscript with the Spike in general) parts of my code feature comments and explanation of these applications.</p>
 
 ## DISCLAIMER
 <p>This project is not yet finished as I have yet to write the AI algorithm that physically runs the lego motors to move the ball from the chosen start square to the end square.</p>
@@ -19,14 +19,14 @@
   ### Software
   <ul>
     <li><a href="https://openmv.io/pages/download">OpenMV IDE</a></li>
-    <li><a href="https://code.visualstudio.com/download">Visual Studio Code</a> or another IDE to run pyscript on: <a href="https://pyscript.com">Pyscript.com</a>, <a href="https://github.com/ntoll/codespaces-project-template-pyscript">Github Codespace with pyscript presetup</a>, etc</li>
+    <li><a href="https://code.visualstudio.com/download">Visual Studio Code</a> or another IDE to run Pyscript on: <a href="https://pyscript.com">Pyscript.com</a>, <a href="https://github.com/ntoll/codespaces-project-template-pyscript">Github Codespace with Pyscript presetup</a>, etc</li>
     <li><a href="https://github.com/chrisbuerginrogers/SPIKE_Prime/blob/main/BLE/BLE_CEEO.py#L1">BLE_CEEO.py</a> -- Download this file onto Spike Prime using <a href="https://thonny.org/">Thonny</a>. This IDE is very effective at connecting micropython devices.</li>
   </ul>
   
   ### Firmware
   <ul>
     <li><a href="https://raw.githack.com/tuftsceeo/SPIKE-html/main/index.html">Custom firmware</a> -- Download onto Spike Prime</li>
-    <p>This firmware enables uart communication on the Spike Prime Hub. To restore the original firmware, open the official spike IDE (where you would normally write spike code) and click 'update hub'</p>
+    <p>This firmware enables UART communication on the Spike Prime Hub. To restore the original firmware, open the official spike IDE (where you would normally write spike code) and click 'update hub'</p>
   </ul>
 
 ## Further Reading:
