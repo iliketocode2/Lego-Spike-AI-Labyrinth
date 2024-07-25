@@ -5,6 +5,10 @@
 ## DISCLAIMER
 <p>This project is not yet finished as I have yet to write the AI algorithm that physically runs the lego motors to move the ball from the chosen start square to the end square. There are also many existing bugs. Feel free to create issues for this repository.</p>
 
+## Communication Overview
+![commnication flow chart](https://github.com/user-attachments/assets/9fabc1e3-81ef-417d-94d6-e6918032a667)
+
+
 ## Materials
   - ### Hardware
     - Lego Spike
@@ -29,7 +33,7 @@
     
     This firmware enables UART communication on the Spike Prime Hub. To restore the original firmware, open the official spike IDE (where you would normally write spike code) and click 'update hub'
 
-## Further Reading:
+## Further Reading
 - [UART](https://www.analog.com/en/resources/analog-dialogue/articles/uart-a-hardware-communication-protocol.html)
 - [Lego Spike Prime Python Library](https://spike.legoeducation.com/prime/help/lls-help-python#lls-help-python-spm)
 - [OpenMV docs](https://docs.openmv.io)
