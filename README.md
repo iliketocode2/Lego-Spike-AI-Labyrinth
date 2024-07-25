@@ -2,16 +2,12 @@
 <h3>OpenMV & Uart, Q-learning, Bluetooth, and Pyscript (With extra js)</h3>
 <p>The goal of this project was to explore potential roles for the Lego Spike Prime in a system with external devices and heavy computation and graphical display. Now, this repository contains all of the code and instruction necessary for you to recreate a similar project should you choose to do so. In addition if you are looking here for specific Spike-related processes (such as connecting to the Spike with bluetooth or using pyscript with the Spike in general) parts of my code feature comments and explanation of these applications.</p>
 
-###
-
-<h2>DISCLAIMER</h2>
+## DISCLAIMER
 <p>This project is not yet finished as I have yet to write the AI algorithm that has physically runs the lego motors to move the ball from the chosen start square to the end square.</p>
 
-###
-
-<h3>Materials:</h3>
+## Materials
 <ul>
-  <li>Hardware</li>
+  ### Hardware
   <ul>
     <li>Lego Spike</li>
     <li>OpenMV Cam (I used an R2) with a <a href="https://www.instructables.com/Backpack-1-OpenMV-Camera/">custom PCB connector on the back</a> -- this will connect to the black section of a lego ultrasonic sensor</li>
@@ -32,9 +28,7 @@
   </ul>
 </ul>
 
-###
-
-<h3>Further Reading:</h3>
+## Further Reading:
 <ul>
   <li><a href="https://www.analog.com/en/resources/analog-dialogue/articles/uart-a-hardware-communication-protocol.html">UART</a></li>
   <li><a href="https://spike.legoeducation.com/prime/help/lls-help-python#lls-help-python-spm">Lego Spike Prime Python Library</a></li>
