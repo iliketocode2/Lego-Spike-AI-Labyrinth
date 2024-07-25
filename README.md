@@ -17,10 +17,10 @@
   - ### Software
     - [OpenMV IDE](https://openmv.io/pages/download)
     - [Visual Studio Code](https://code.visualstudio.com/download) or another IDE to run Pyscript on: [Pyscript.com](https://pyscript.com), [Github Codespace with Pyscript presetup](https://github.com/ntoll/codespaces-project-template-pyscript), etc
-    - [BLE_CEEO.py](https://github.com/chrisbuerginrogers/SPIKE_Prime/blob/main/BLE/BLE_CEEO.py#L1) -- Download this file onto Spike Prime using [Thonny](https://thonny.org). This IDE is very effective at connecting micropython devices.
+    - [BLE_CEEO.py](https://github.com/chrisbuerginrogers/SPIKE_Prime/blob/main/BLE/BLE_CEEO.py#L1) -- Download this file onto the Spike Prime using [Thonny](https://thonny.org). This IDE is very effective at connecting micropython devices.
   
   - ### Firmware
-    - [Custom firmware](https://raw.githack.com/tuftsceeo/SPIKE-html/main/index.html) -- Download onto Spike Prime
+    - [Custom firmware](https://raw.githack.com/tuftsceeo/SPIKE-html/main/index.html) for the Spike Prime
       - To install:
         1. Turn off the Spike Prime and disconnect it from all devices
         2. Hold down the bluetooth button until it strobes blue, green, pink
