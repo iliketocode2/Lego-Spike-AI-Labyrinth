@@ -11,25 +11,27 @@
 
 <h3>Materials:</h3>
 <ul>
-  <li>OpenMV Cam (I used an R2) with a <a href="https://www.instructables.com/Backpack-1-OpenMV-Camera/">custom PCB connector on the back</a> -- this will connect to the black section of a lego ultrasonic sensor</li>
-  <li>OpenMV IDE</li>
-  <li>Visual Studio Code or another IDE to run pyscript on: Pyscript.com, Github Codespace with pyscript presetup, etc</li>
-  <li>Lego Spike</li>
-  <li><a href="https://www.brickowl.com/catalog/lego-spike-prime-set-45678/inventory">Lego pieces</a> (I used a combination of about 3 spike kits worth of parts)!
-</li>
-    <ul>
-      <li>Two large Spike Motors</li>
-      <li>One Spike Prime Hub</li>
-      <li>Large Beams</li>
-      <li>Right Angle Connectors</li>
-      <li>Two Yellow Plates</li>
-      <li>etc...</li>
-    </ul>
-  <li><a href="https://drive.google.com/file/d/1D8D3vNA3ystbz31rbjCMvUVYvHGMd4PP/view?usp=sharing">Instructions made by me for the model I built</a></li>
-  <li>Some cord to connect the Spike to your computer (typically usb to micro usb)</li>
-  <li><a href="https://raw.githack.com/tuftsceeo/SPIKE-html/main/index.html">Custom firmware (for uart communication).</a> To restore the original firmware, open the official spike IDE (where you would normally write spike code) and click 'update hub'</li>
-  <li><a href="https://github.com/chrisbuerginrogers/SPIKE_Prime/blob/main/BLE/BLE_CEEO.py#L1">BLE_CEEO.py</a> for establishing a bluetooth connection between your Spike and your computer</li>
-</ul>
+  <li style="font-size: 30px;">Hardware</li>
+  <ul>
+    <li>OpenMV Cam (I used an R2) with a <a href="https://www.instructables.com/Backpack-1-OpenMV-Camera/">custom PCB connector on the back</a> -- this will connect to the black section of a lego ultrasonic sensor</li>
+    <li>OpenMV IDE</li>
+    <li>Visual Studio Code or another IDE to run pyscript on: Pyscript.com, Github Codespace with pyscript presetup, etc</li>
+    <li>Lego Spike</li>
+    <li><a href="https://www.brickowl.com/catalog/lego-spike-prime-set-45678/inventory">Lego pieces</a> (I used a combination of about 3 spike kits worth of parts)!
+  </li>
+      <ul>
+        <li>Two large Spike Motors</li>
+        <li>One Spike Prime Hub</li>
+        <li>Large Beams</li>
+        <li>Right Angle Connectors</li>
+        <li>Two Yellow Plates</li>
+        <li>etc...</li>
+      </ul>
+    <li><a href="https://drive.google.com/file/d/1D8D3vNA3ystbz31rbjCMvUVYvHGMd4PP/view?usp=sharing">Instructions made by me for the model I built</a></li>
+    <li>Some cord to connect the Spike to your computer (typically usb to micro usb)</li>
+    <li><a href="https://raw.githack.com/tuftsceeo/SPIKE-html/main/index.html">Custom firmware (for uart communication).</a> To restore the original firmware, open the official spike IDE (where you would normally write spike code) and click 'update hub'</li>
+    <li><a href="https://github.com/chrisbuerginrogers/SPIKE_Prime/blob/main/BLE/BLE_CEEO.py#L1">BLE_CEEO.py</a> for establishing a bluetooth connection between your Spike and your computer</li>
+  </ul>
 
 ###
 
