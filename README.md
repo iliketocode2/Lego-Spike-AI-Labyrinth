@@ -1,4 +1,4 @@
-# <h1> Build and Program the AI Spike Labyrinth</h1>
+# Build and Program the AI Spike Labyrinth
 <h3>OpenMV & Uart, Q-learning, Bluetooth, and Pyscript (With extra js)</h3>
 <p>The goal of this project was to explore potential roles for the Lego Spike Prime in a system with external devices and heavy computation and graphical display. Now, this repository contains all of the code and instruction necessary for you to recreate a similar project should you choose to do so. In addition if you are looking here for specific Spike-related processes (such as connecting to the Spike with bluetooth or using pyscript with the Spike in general) parts of my code feature comments and explanation of these applications.</p>
 
