@@ -41,5 +41,5 @@
 - [Q-learning Explanation](https://www.datacamp.com/tutorial/introduction-q-learning-beginner-tutorial)
 - [How to setup Github Pages and VS Code with GitHub](https://shimmering-cesium-c35.notion.site/Summer-of-24-0c8bd589e46b4b8b84bc484837b5b102?p=a9854b32e4454b29ae056981a6eb6ee1&pm=c)
 
-### Build Render
+## Build Render
 ![spike labyrinth model render](https://github.com/user-attachments/assets/572d4f52-462e-4aab-9dce-a34d50dcdc79)
