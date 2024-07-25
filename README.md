@@ -14,7 +14,7 @@
     - Lego Spike
     - OpenMV Cam (I used an R2) with a [custom PCB connector on the back](https://www.instructables.com/Backpack-1-OpenMV-Camera/) -- this will connect to the black section of a lego ultrasonic sensor
     - [Lego pieces](https://www.brickowl.com/catalog/lego-spike-prime-set-45678/inventory): This model contains ~480 pieces</li>
-    - [A red Lego ball](https://www.brickowl.com/catalog/lego-red-hard-plastic-ball-52mm-22119-23065) (unless you change the openMV color detection/blob code)</li>
+    - [A red Lego ball](https://www.brickowl.com/catalog/lego-red-hard-plastic-ball-52mm-22119-23065) (unless you change the OpenMV color detection/blob code)</li>
     - [Instructions for the model I built](https://drive.google.com/file/d/1D8D3vNA3ystbz31rbjCMvUVYvHGMd4PP/view?usp=sharing)
     - A cord to connect the Spike Prime to your computer (typically usb to micro usb)
   
