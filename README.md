@@ -43,6 +43,7 @@ If the orientation of your screen compared to the physical device you build is o
 
 ## Further Reading
 - [UART](https://www.analog.com/en/resources/analog-dialogue/articles/uart-a-hardware-communication-protocol.html)
+- [BLE](https://novelbits.io/bluetooth-low-energy-ble-complete-guide/)
 - [Lego Spike Prime Python Library](https://spike.legoeducation.com/prime/help/lls-help-python#lls-help-python-spm)
 - [OpenMV docs](https://docs.openmv.io)
 - [Q-learning Explanation](https://www.datacamp.com/tutorial/introduction-q-learning-beginner-tutorial)
