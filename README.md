@@ -6,27 +6,27 @@
 <p>This project is not yet finished as I have yet to write the AI algorithm that has physically runs the lego motors to move the ball from the chosen start square to the end square.</p>
 
 ## Materials
-<ul>
   ### Hardware
   <ul>
     <li>Lego Spike</li>
     <li>OpenMV Cam (I used an R2) with a <a href="https://www.instructables.com/Backpack-1-OpenMV-Camera/">custom PCB connector on the back</a> -- this will connect to the black section of a lego ultrasonic sensor</li>
     <li><a href="https://www.brickowl.com/catalog/lego-spike-prime-set-45678/inventory">Lego pieces</a>: This model contains ~480 pieces</li>
-    <li><a href="https://drive.google.com/file/d/1D8D3vNA3ystbz31rbjCMvUVYvHGMd4PP/view?usp=sharing">Instructions made by me for the model I built</a></li>
+    <li><a href="https://drive.google.com/file/d/1D8D3vNA3ystbz31rbjCMvUVYvHGMd4PP/view?usp=sharing">Instructions for the model I built</a></li>
     <li>A cord to connect the Spike Prime to your computer (typically usb to micro usb)</li>
   </ul>
-  <li>**Software**</li>
+  
+  ### Software
   <ul>
     <li>OpenMV IDE</li>
     <li>Visual Studio Code or another IDE to run pyscript on: Pyscript.com, Github Codespace with pyscript presetup, etc</li>
     <li><a href="https://github.com/chrisbuerginrogers/SPIKE_Prime/blob/main/BLE/BLE_CEEO.py#L1">BLE_CEEO.py</a>: Download onto Spike Prime</li>
   </ul>
-  <li>**Firmware**</li>
+  
+  ### Firmware
   <ul>
     <li><a href="https://raw.githack.com/tuftsceeo/SPIKE-html/main/index.html">Custom firmware</a>: Download onto Spike Prime</li>
     <p>This firmware enables uart communication on the Spike Prime Hub. To restore the original firmware, open the official spike IDE (where you would normally write spike code) and click 'update hub'</p>
   </ul>
-</ul>
 
 ## Further Reading:
 <ul>
