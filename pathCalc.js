@@ -240,7 +240,7 @@ function runQLearning() {
     const env = new Environment(rewardGrid);
     const agent = new QLearningAgent(env);
 
-    const numEpisodes = 10000;  // Increase the number of episodes
+    const numEpisodes = 1000; 
     const maxSteps = window.ROWS * window.COLS * 4;
 
     for (let episode = 0; episode < numEpisodes; episode++) {

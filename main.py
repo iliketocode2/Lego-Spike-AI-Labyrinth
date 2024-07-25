@@ -4,6 +4,7 @@ from ble_test import code as ble_code
 import json
 import file_transfer
 import math, re
+import asyncio
 
 #
 ARDUINO_NANO = 128
@@ -35,7 +36,7 @@ async def on_load(event):
         status = await terminal.download(name,reply)
 
         if terminal.connected:
-            await terminal.eval('\x05' + ble_code + '\x04') #run code 
+            await terminal.eval('\x05' + ble_code + '\x04') #run code to recieve data from spike and openMV cam
             terminal.focus()
             document.getElementById('ble_connect').classList.toggle("inactive")
             # return False
@@ -174,39 +175,10 @@ def stop_simulation(event):
 # stop_button = document.getElementById("stop")
 # stop_button.onclick = stop_simulation
 
-#--------------------------- UART communication with openMV camera -----------------------------
-uart_code = '''
-from hub import uart
-import time
+#--------------------------- Recieve key call from js -----------------------------
 
-U = uart.init(0,115200,100) #make sure the baud rate matches the baud rate of the openMV camera. In this case: 115200
+async def sendMotorPos(name, direc):
+    print('updated name and direc: ', name, ' ', direc)
+    ble.write(f"{name}**{direc}")
 
-#other custom CEEO uart functions. Download the firmware onto your spike here: https://raw.githack.com/tuftsceeo/SPIKE-html/main/index.html
-#BEWARE OF SLIGHT MOTOR ISSUES WITH THIS FIRMWARE -- in other words, running motors sometimes has a strange oscillation affect
-#U.write("hello there")
-#U.read(4)
-#U.readline()
-#U.readuntil("b")
-#U.any()
-#U.readchar()
-#U.txdone()
-#U.status()
-
-
-while(U.status() != "MODE_UART"):
-    ...
-
-while(1):
-    b = U.any()
-    message = U.read(b)
-    messStr = str(message)[2:-3]
-    print('messStr: ', messStr)
-    print('message: ', message)
-    time.sleep(1)
-'''
-
-# async def uart_codeFunc(event):
-#     print('running uart code')
-#     await terminal.eval(uart_code)
-
-# document.getElementById("uartTest").onclick = uart_codeFunc
+window.sendMotorPos = sendMotorPos
