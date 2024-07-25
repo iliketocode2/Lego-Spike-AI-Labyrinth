@@ -23,6 +23,7 @@
       <li>Two Yellow Plates</li>
       <li>etc...</li>
     </ul>
+  <li><a href="https://drive.google.com/file/d/1D8D3vNA3ystbz31rbjCMvUVYvHGMd4PP/view?usp=sharing">Instructions made by me for the model I built</a></li>
   <li>Some cord to connect the Spike to your computer (typically usb to micro usb)</li>
   <li><a href="https://raw.githack.com/tuftsceeo/SPIKE-html/main/index.html">Custom firmware (for uart communication)</a></li>
   <li><a href="https://github.com/chrisbuerginrogers/SPIKE_Prime/blob/main/BLE/BLE_CEEO.py#L1">BLE_CEEO.py</a> for establishing a bluetooth connection between your Spike and your computer</li>
