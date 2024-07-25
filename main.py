@@ -1,6 +1,6 @@
 from pyscript import document, window, when
 import andrea_terminal, restapi, file_transfer, file_os
-from ble_test import code as ble_code
+from ble_run_code import code as ble_code
 import json
 import file_transfer
 import math, re

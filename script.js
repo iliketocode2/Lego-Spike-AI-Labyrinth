@@ -119,6 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
         velocityX = 0;
         velocityY = 0;
         ballRotation = 0;
+        window.gameStarted = true;
         window.simStarted = true;
         animate();
     }
