@@ -8,7 +8,7 @@
 
 ###
 
-<h5>Materials:</h5>
+<h3>Materials:</h3>
 <ul>
   <li>OpenMV Cam (I used an R2) with a <a href="https://www.instructables.com/Backpack-1-OpenMV-Camera/">converter connector on the back</a> -- this will connect to the black section of a lego ultrasonic sensor</li>
   <li>OpenMV IDE</li>
@@ -32,7 +32,7 @@
 
 ###
 
-<h5>Further Reading:</h5>
+<h3>Further Reading:</h3>
 <ul>
   <li><a href="https://www.analog.com/en/resources/analog-dialogue/articles/uart-a-hardware-communication-protocol.html">UART</a></li>
   <li><a href="https://spike.legoeducation.com/prime/help/lls-help-python#lls-help-python-spm">Lego Spike Prime Python Library</a></li>
