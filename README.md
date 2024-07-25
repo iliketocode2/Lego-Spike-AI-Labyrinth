@@ -32,4 +32,14 @@
 
 ###
 
+<h5>Further Reading:</h5>
+<ul>
+  <li><a href="https://www.analog.com/en/resources/analog-dialogue/articles/uart-a-hardware-communication-protocol.html">UART</a></li>
+  <li><a href="https://spike.legoeducation.com/prime/help/lls-help-python#lls-help-python-spm">Lego Spike Prime Python Library</a></li>
+  <li><a href="https://docs.openmv.io">OpenMV docs</a></li>
+  <li><a href="https://www.datacamp.com/tutorial/introduction-q-learning-beginner-tutorial">Q-learning Explanation</a></li>
+</ul>
+
+###
+
 ![spike labyrinth model render](https://github.com/user-attachments/assets/572d4f52-462e-4aab-9dce-a34d50dcdc79)
