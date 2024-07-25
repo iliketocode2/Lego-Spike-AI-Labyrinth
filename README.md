@@ -10,7 +10,7 @@
 
 <h5>Materials:</h5>
 <ul>
-  <li>OpenMV Cam (I used an R2) with <a href="https://www.instructables.com/Backpack-1-OpenMV-Camera/">converter connector on the back</a> -- this will connect to the black section of a lego ultrasonic sensor</li>
+  <li>OpenMV Cam (I used an R2) with a <a href="https://www.instructables.com/Backpack-1-OpenMV-Camera/">converter connector on the back</a> -- this will connect to the black section of a lego ultrasonic sensor</li>
   <li>OpenMV IDE</li>
   <li>Visual Studio Code or another IDE to run pyscript on: Pyscript.com, Github Codespace with pyscript presetup, etc</li>
   <li>Lego Spike</li>
