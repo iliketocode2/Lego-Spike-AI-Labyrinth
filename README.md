@@ -7,6 +7,8 @@
 
 ## Communication Overview
 ![commnication flow chart](https://github.com/user-attachments/assets/9fabc1e3-81ef-417d-94d6-e6918032a667)
+- Solid lines depict physical connection, dotted Lines depict ble connection.
+- Double sided arrows indicate two-way communication (send and receive) data, single sided arrows represent one-way communication.
 
 ## Website Overview
 The website (what you will have displayed on your screen after running the code in an IDE with HTML preview features) features two primary modes: Free Play mode and AI mode. Within Free Play mode there are two sub modes: (x, y) mapping and (pitch, roll) mapping. 
