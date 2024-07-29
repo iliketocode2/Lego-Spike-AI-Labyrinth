@@ -396,3 +396,8 @@ progress::-moz-progress-bar {
 .popup.fade-out {
   opacity: 0;
 }
+
+/*---------------------------------Run button---------------------------------*/
+#start{
+  display: none;
+}

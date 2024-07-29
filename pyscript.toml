@@ -6,6 +6,8 @@ name = "CBR Libraries"
 "https://chrisrogers.pyscriptapps.com/cbr-libraries/latest/core/file_os.py" = "file_os.py"
 "/file_transfer.py" = "file_transfer.py"
 "/ble_run_code.py" = "ble_run_code.py"
+"/PID_control.py" = "PID_control.py"
+"/my_globals.py" = "my_globals.py"
 
 [js_modules.main]
 "https://esm.run/micro-repl@0.5.1/serial" = "micro_repl"

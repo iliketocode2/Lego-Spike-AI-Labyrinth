@@ -2,6 +2,16 @@ function initializePopup() {
     const popup = document.getElementById("popup");
     const yesButton = document.getElementById("yesButton");
     const noButton = document.getElementById("noButton");
+    const buttonStart = document.getElementById("start");
+
+    buttonStart.addEventListener('click', () => { 
+        console.log('Button clicked! PATH: ', window.path);
+        window.runSpikeToEndPos();
+    });
+
+    window.showButton = function() {
+        buttonStart.style.display = 'block';
+    }
 
     window.showPopup = function() {
         popup.classList.remove("fade-out");
@@ -95,16 +105,17 @@ function getWalls() {
     return walls;
 }
 
-
+/*---------------------implements the Q-learning algorithm to create table of optimal actions in the environment.---------------------*/
 class QLearningAgent {
     constructor(env, alpha = 0.1, gamma = 0.99, epsilon = 0.1) {
-        this.env = env;
-        this.alpha = alpha;
-        this.gamma = gamma;
-        this.epsilon = epsilon;
+        this.env = env; // Environment in which the agent operates
+        this.alpha = alpha; // Learning rate
+        this.gamma = gamma;  // discount factor
+        this.epsilon = epsilon;  // randomness rate (at each choice, what percent will be random)
         this.qtable = this.initializeQTable();
     }
 
+     // Initialize Q-table with all state-action pairs set to zero
     initializeQTable() {
         const table = {};
         for (let i = 0; i < window.ROWS; i++) {
@@ -278,7 +289,8 @@ function showTrainingCompletePopup() {
 
 function displayOptimalPath(agent) {
     let state = agent.env.getStartState();
-    const path = [state];
+    // const path = [state];
+    window.path = [state];
     const maxPathLength = window.ROWS * window.COLS * 2;
     let stepCount = 0;
 
@@ -302,7 +314,7 @@ function displayOptimalPath(agent) {
         }
 
         state = `${nextRow},${nextCol}`;
-        path.push(state);
+        window.path.push(state);
         stepCount++;
 
         if (state === agent.env.endState) {
@@ -311,14 +323,14 @@ function displayOptimalPath(agent) {
         }
     }
 
-    console.log("Final path:", path);
+    console.log("Final path:", window.path);
 
     if (stepCount >= maxPathLength) {
         console.log("Maximum path length reached, path may be incomplete");
     }
 
     // Display the path
-    path.forEach((state, index) => {
+    window.path.forEach((state, index) => {
         const [row, col] = state.split(',').map(Number);
         const cell = document.querySelector(`.grid-cell[data-row="${row}"][data-col="${col}"]`);
         if (cell) {
@@ -327,7 +339,7 @@ function displayOptimalPath(agent) {
             pathMarker.style.cssText = `
                 width: 10px; 
                 height: 10px; 
-                background: ${index === 0 ? 'green' : index === path.length - 1 ? 'red' : 'blue'}; 
+                background: ${index === 0 ? 'green' : index === window.path.length - 1 ? 'red' : 'blue'}; 
                 border-radius: 50%; 
                 position: absolute; 
                 top: 50%; 
@@ -337,4 +349,6 @@ function displayOptimalPath(agent) {
             cell.appendChild(pathMarker);
         }
     });
+
+    window.showButton();
 }

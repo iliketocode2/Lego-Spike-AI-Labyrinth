@@ -1,6 +1,7 @@
-'''
 # install the openmv IDE and save this code on your camera: connect camera --> save to camera --> tools --> save open script to camera. 
 # this will ensure that this code runs when the camera is powered on.
+
+'''
 
 import sensor, image, time
 import sensor, image, time, pyb

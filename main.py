@@ -2,7 +2,7 @@ from pyscript import document, window, when
 import andrea_terminal, restapi, file_transfer, file_os
 from ble_run_code import code as ble_code
 import json
-import file_transfer
+import file_transfer, PID_control, my_globals
 import math, re
 import asyncio
 
@@ -74,8 +74,6 @@ for b in btns:
 
 
 #--------------------------- all BLE control --------------------------------
-from pyscript.js_modules import ble_library
-
 ble_info = document.getElementById("ble_info")
 yaw = 0
 pitch = 0
@@ -117,6 +115,8 @@ def parse_xy(data):
             raise ValueError("Expected 2 values for x and y coordinates")
         x = int(clean_data[0].strip())
         y = int(clean_data[1].strip())
+        my_globals.x = x
+        my_globals.y = y
         return x, y
     except (IndexError, ValueError) as e:
         print(f"Invalid data format: {data}. Error: {e}")
@@ -138,25 +138,24 @@ def received_ble(data):
             roll_rad = (roll / 10) * (math.pi / 180) * -1
             window.updateBallTilt(pitch_rad, roll_rad)
 
-ble = ble_library.newBLE()
-ble.callback = received_ble
+my_globals.ble.callback = received_ble
 
 connected = False
 @when("click", "#ble_connect")
 async def ask(event):
     global connected
     if connected:
-        await ble.disconnect()
+        await my_globals.ble.disconnect()
         document.getElementById("ble_connect").innerHTML = 'Connect via BLE'
         document.querySelector(".ble_info").style.display = 'none'
         print('disconnected')
         connected = False
     else:
         name = document.getElementById("ble_name").value
-        if await ble.ask(name):
+        if await my_globals.ble.ask(name):
             print('name ', name)
             document.getElementById("ble_connect").innerHTML = 'Connecting...'
-            await ble.connect() 
+            await my_globals.ble.connect() 
             print('connected!')
             document.querySelector(".ble_info").style.display = 'block'
             document.getElementById("ble_connect").innerHTML = 'Disconnect'
@@ -164,8 +163,8 @@ async def ask(event):
 
 @when("click", "#send_ble")
 def on_send_ble(event):
-    print(ble_info.value)
-    ble.write(ble_info.value)
+    print("baguette")
+    my_globals.ble.write("baguette")
 
 #--------------------------- controlling the ball --------------------------------
 
@@ -179,6 +178,7 @@ def stop_simulation(event):
 
 async def sendMotorPos(name, direc):
     print('updated name and direc: ', name, ' ', direc)
-    ble.write(f"{name}**{direc}")
+    # my_globals.ble.write(f"{name}**{direc}")
 
 window.sendMotorPos = sendMotorPos
+

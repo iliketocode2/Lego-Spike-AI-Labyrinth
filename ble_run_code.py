@@ -23,8 +23,8 @@ def runConnected(me):
     print('ble connected')
     utime.sleep(2)
 
-    # while (True):
-    for i in range(1000):
+    while (True):
+    # for i in range(1000):
     
         payload = ''
 
@@ -53,13 +53,14 @@ def runConnected(me):
         direc = 0
 
         if me.is_any:
+            print('received')
             parts = me.read().split("**")
             if len(parts) > 0:
                 name = parts[0] 
                 direc = parts[1]
 
             print('NAME:', name, 'DIREC:', direc)
-            motorControl(name, direc)
+            manualMotorControl(name, direc)
 
         if not me.is_connected:
             print('lost connection')
@@ -67,7 +68,7 @@ def runConnected(me):
             
         utime.sleep(0.1)               
 
-def motorControl(a, b):
+def manualMotorControl(a, b):
     speed = 50
     if a == '2' and b == '2': #if no arrow keys pressed, return to positions
         if motor.absolute_position(motor_b) > 13:
