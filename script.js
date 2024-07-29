@@ -392,9 +392,9 @@ document.addEventListener('DOMContentLoaded', function() {
             if (window.ballControlMode === 'sensors'){
                 moveCircle(lastPitch, lastRoll);
                 drawTiltIndicator(pitch, roll);
-            } else {
-                drawBall(ballX, ballY);
             }
+            
+            drawBall(ballX, ballY);
             checkEndReached();
         }
     }
@@ -515,8 +515,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
         // Check if tilt exceeds the minimum angle to overcome static friction
         if (tiltMagnitude > MIN_TILT_ANGLE) {
-            let accX = rotatedTiltX * GRAVITY;
-            let accY = rotatedTiltY * GRAVITY;
+            let accX = tiltX * GRAVITY;
+            let accY = tiltY * GRAVITY;
     
             velocityX += accX;
             velocityY += accY;

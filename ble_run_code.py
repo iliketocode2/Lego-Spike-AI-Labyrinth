@@ -5,10 +5,19 @@ from hub import port, motion_sensor, uart
 
 U = uart.init(0,115200,100)
 # Define motor ports (make sure to change these for your setup)
-motor_b = port.B
-motor_e = port.E
+motorY = port.B
+motorX = port.F
 
 def peripheral(name): 
+    # zero motors
+    while (motor.absolute_position(motorX)) != 0:
+        motor.run_to_absolute_position(motorX, 0, 100)
+    motor.reset_relative_position(motorX)
+    while (motor.absolute_position(motorY)) != 0:
+        motor.run_to_absolute_position(motorY, 0, 100)
+    motor.reset_relative_position(motorY)
+
+    #connect up
     try:
         p = Yell(name, verbose = True)
         if p.connect_up():
@@ -39,8 +48,8 @@ def runConnected(me):
 
         payload += "**"
 
-        pos1 = motor.absolute_position(motor_b)
-        pos2 = motor.relative_position(motor_e)
+        pos1 = motor.absolute_position(motorY)
+        pos2 = motor.relative_position(motorX)
         payload += "(B: "
         payload += str(pos1)
         payload += ", E: "
@@ -70,48 +79,45 @@ def runConnected(me):
 
 def manualMotorControl(a, b):
     speed = 50
-    if a == '2' and b == '2': #if no arrow keys pressed, return to positions
-        if motor.absolute_position(motor_b) > 13:
-                motor.run_to_absolute_position(motor_b, 11, 0 - speed)
-        elif motor.absolute_position(motor_b) < -3:
-                motor.run_to_absolute_position(motor_b, -1, speed)
-        else:
-            motor.stop(motor_b)
+    leftBound = -8
+    rightBound = 8
 
-        if motor.absolute_position(motor_e) > -170:
-                motor.run_to_absolute_position(motor_e, -172, 0 - speed)
-        elif motor.absolute_position(motor_e) < -182:
-                motor.run_to_absolute_position(motor_e, -180, speed)
+    if a == '2': #if no arrow keys pressed, go to limits or stop
+        if motor.absolute_position(motorY) > rightBound:
+            while (motor.absolute_position(motorY)) != rightBound:
+                motor.run_to_absolute_position(motorY, rightBound, 0 - speed)
+        elif motor.absolute_position(motorY) < leftBound:
+            while (motor.absolute_position(motorY)) != leftBound:
+                motor.run_to_absolute_position(motorY, leftBound, speed)
         else:
-            motor.stop(motor_e)
+            motor.stop(motorY)
+
+        if motor.absolute_position(motorX) > rightBound:
+            while (motor.absolute_position(motorX)) != rightBound:
+                motor.run_to_absolute_position(motorX, rightBound, 0 - speed)
+        elif motor.absolute_position(motorX) < leftBound:
+            while (motor.absolute_position(motorX)) != leftBound:
+                motor.run_to_absolute_position(motorX, leftBound, speed)
+        else:
+            motor.stop(motorX)
+    elif a == '1': #up down
+        if motor.absolute_position(motorY) > leftBound - 1 and motor.absolute_position(motorY) < rightBound + 1:
+            if b == '1':
+                motor.run(motorY, speed)
+            elif b == '-1':
+                motor.run(motorY, 0 - speed)
+        else:
+            motor.stop(motorY)
+    elif a == '0': #right left
+        if motor.absolute_position(motorX) > leftBound - 1 and motor.absolute_position(motorX) < rightBound + 1:
+            if b == '1':
+                motor.run(motorX, speed)
+            elif b == '-1':
+                motor.run(motorX, 0 - speed)   
+        else:
+            motor.stop(motorX)
     else:
-        if a == '1' and b == '1':
-            if motor.absolute_position(motor_b) > 13:
-                motor.run_to_absolute_position(motor_b, 11, 0 - speed)
-                utime.sleep(0.1)
-            else:
-                motor.run(motor_b, speed)
-
-        elif a == '1' and b == '-1':
-            if motor.absolute_position(motor_b) < -3:
-                motor.run_to_absolute_position(motor_b, -1, speed)
-                utime.sleep(0.1)
-            else:
-                motor.run(motor_b, 0 - speed)
-
-        if a == '0' and b == '1':
-            if motor.absolute_position(motor_e) > -170:
-                motor.run_to_absolute_position(motor_e, -172, 0 - speed)
-                utime.sleep(0.1)
-            else:
-                motor.run(motor_e, speed)
-
-        elif a == '0' and b == '-1':
-            if motor.absolute_position(motor_e) < -182:
-                motor.run_to_absolute_position(motor_e, -180, speed)
-                utime.sleep(0.1)
-            else:
-                motor.run(motor_e, 0 - speed)   
+        print('invalid input')
 
 peripheral('Spike')
 '''

@@ -178,7 +178,7 @@ def stop_simulation(event):
 
 async def sendMotorPos(name, direc):
     print('updated name and direc: ', name, ' ', direc)
-    # my_globals.ble.write(f"{name}**{direc}")
+    my_globals.ble.write(f"{name}**{direc}")
 
 window.sendMotorPos = sendMotorPos
 
