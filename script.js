@@ -124,16 +124,26 @@ document.addEventListener('DOMContentLoaded', function() {
         animate();
     }
     
-    function checkEndReached() {
-        const cellWidth = CANVAS_WIDTH / window.COLS;
-        const cellHeight = CANVAS_HEIGHT / window.ROWS;
-        const [endRow, endCol] = unrotateCoordinates(parseInt(window.endSquare.dataset.row), parseInt(window.endSquare.dataset.col));
-        const endX = (endCol + 0.5) * cellWidth;
-        const endY = (endRow + 0.5) * cellHeight;
-        
-        const distance = Math.sqrt(Math.pow(ballX - endX, 2) + Math.pow(ballY - endY, 2));
-        if (distance < BALL_RADIUS * 2) {
-            promptUser("Goal reached! Restarting the game.");
+    function checkEndReached(mode) {
+        if (mode === 1) {
+            const cellWidth = CANVAS_WIDTH / window.COLS;
+            const cellHeight = CANVAS_HEIGHT / window.ROWS;
+            const [endRow, endCol] = unrotateCoordinates(parseInt(window.endSquare.dataset.row), parseInt(window.endSquare.dataset.col));
+            const endX = (endCol + 0.5) * cellWidth;
+            const endY = (endRow + 0.5) * cellHeight;
+            
+            const distance = Math.sqrt(Math.pow(ballX - endX, 2) + Math.pow(ballY - endY, 2));
+            if (distance < BALL_RADIUS * 2) {
+                promptUser("Goal reached! Restarting the game.");
+                window.startSquare.classList.remove('start');
+                window.startSquare.textContent = '';
+                window.endSquare.classList.remove('end');
+                window.endSquare.textContent = '';
+                initializeGame();
+            }
+        }
+        else{
+            promptUser("Manually Stopped! Restarting the game.");
             window.startSquare.classList.remove('start');
             window.startSquare.textContent = '';
             window.endSquare.classList.remove('end');
@@ -389,13 +399,15 @@ document.addEventListener('DOMContentLoaded', function() {
         ctx.restore();
 
         if (window.gameStarted) {
+            document.getElementById('stop').style.display = 'block';
             if (window.ballControlMode === 'sensors') {
-                moveCircle(lastPitch, lastRoll);
+                moveBall(lastPitch, lastRoll);
                 drawTiltIndicator(lastPitch, lastRoll);
             }
-
-            drawBall(ballX, ballY);
-            checkEndReached();
+            else{
+                drawBall(ballX, ballY);
+            }
+            checkEndReached(1);
         }
     }
 
@@ -485,26 +497,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
 //--------------------------------- ball calculation for physics, call drawBall, and interaction on canvas ---------------------------------
 
-    function moveCircle(pitch, roll) {
-        if (!window.gameStarted) return; //prevent overriding the ball position
-
-        ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-
+    function moveBall(pitch, roll) {
         // Adjust tilt based on grid rotation
         let adjustedPitch = pitch;
         let adjustedRoll = roll;
+        
         switch(gridRotation) {
+            case 0:
+                adjustedPitch = roll;
+                adjustedRoll = -pitch;
+                break;
             case 90:
                 adjustedPitch = roll;
                 adjustedRoll = -pitch;
                 break;
             case 180:
-                adjustedPitch = -pitch;
-                adjustedRoll = -roll;
+                adjustedPitch = roll;
+                adjustedRoll = -pitch;
                 break;
             case 270:
-                adjustedPitch = -roll;
-                adjustedRoll = pitch;
+                adjustedPitch = roll;
+                adjustedRoll = -pitch;
                 break;
         }
 
@@ -553,7 +566,9 @@ document.addEventListener('DOMContentLoaded', function() {
             velocityX = 0;
             velocityY = 0;
         }
-    }
+
+        drawBall(ballX, ballY);
+    }    
 
     function handleWallCollisions(newX, newY) {
         const cellWidth = CANVAS_WIDTH / window.COLS;
@@ -758,6 +773,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.getElementById('rotate-cw').addEventListener('click', () => rotateGrid('cw'));
     document.getElementById('rotate-ccw').addEventListener('click', () => rotateGrid('ccw'));
+    document.getElementById('stop').addEventListener('click', () => checkEndReached(0));
 
     createGrid(window.ROWS, window.COLS);
     

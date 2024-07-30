@@ -12,12 +12,14 @@ motorX = port.F
 
 def peripheral(name): 
     # zero motors
+    print('Zeroing motors...')
     while (motor.absolute_position(motorX)) != 0:
         motor.run_to_absolute_position(motorX, 0, 100)
     motor.reset_relative_position(motorX)
     while (motor.absolute_position(motorY)) != 0:
         motor.run_to_absolute_position(motorY, 0, 100)
     motor.reset_relative_position(motorY)
+    print('Motors zeroed')
 
     #connect up
     try:

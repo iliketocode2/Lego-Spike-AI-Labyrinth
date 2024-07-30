@@ -96,10 +96,46 @@ button.text.inactive{
 }
 
 h3 {
+  margin-top: 10px;
   font-size: 2em;
   font-weight: 600;
   color: #3d3b34;
 }
+
+/*---------------------------------Stop and Path Running Buttons---------------------------------*/
+#start{
+  display: none;
+}
+
+.side-by-side{
+  width: 300px;
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  margin-top: 0px;
+}
+
+.button3{
+  margin-top: -20px;
+  margin-bottom: 10px;
+  width: auto;
+  height: 30px;
+  color: white;
+  /* background-color: #db3734; */
+  background-color: #3498db;
+  border-radius: 15px;
+  border: none;
+  position: relative;
+  cursor: pointer;
+  display: none;
+}
+
+.button3:hover{
+  /* background-color: #a62a2a; */
+  background-color: #256997;
+}
+
+/*-------------------Progress Bar-------------------*/
 
 progress {
   width: 100%;
@@ -215,18 +251,6 @@ progress::-moz-progress-bar {
   background-color: rgba(52, 152, 219, 0.5);
 }
 
-/* .grid-node {
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  background-color: #3d3b34;
-  transition: background-color 0.3s;
-  cursor: pointer;
-  position: absolute;
-  transform: translate(-50%, -50%);
-  z-index: 0;
-} */
-
 .grid-node {
   width: 20px;
   height: 20px;
@@ -307,6 +331,7 @@ progress::-moz-progress-bar {
   position: relative;
   cursor: pointer;
   overflow: hidden;
+  margin-top:-5px;
 }
 
 .slider {
@@ -404,9 +429,4 @@ progress::-moz-progress-bar {
 
 .popup.fade-out {
   opacity: 0;
-}
-
-/*---------------------------------Run button---------------------------------*/
-#start{
-  display: none;
 }
