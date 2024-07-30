@@ -79,6 +79,15 @@ button.text.inactive{
   position: relative;
 }
 
+.cover {
+  position: fixed; /* Fixed position to cover the entire viewport */
+  width: 50%;
+  height: 94vh;
+  background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent white */
+  z-index: 1000; /* Ensure it's above other elements */
+  display: block; /* Hide by default */
+}
+
 .box.right {
   width: 70vw;
   display: flex;

@@ -159,6 +159,8 @@ async def ask(event):
             print('connected!')
             document.querySelector(".ble_info").style.display = 'block'
             document.getElementById("ble_connect").innerHTML = 'Disconnect'
+            document.getElementById('board').classList.toggle("inactive")
+            document.getElementById('cover').style.display = 'none'
             connected = True
 
 @when("click", "#send_ble")

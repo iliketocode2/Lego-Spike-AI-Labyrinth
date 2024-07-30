@@ -3,7 +3,9 @@ from BLE_CEEO import Yell, Listen
 import hub, utime, runloop, sys, time, motor
 from hub import port, motion_sensor, uart
 
-U = uart.init(0,115200,100)
+#define uart(port, baudrate, timeout)
+#port 0-5 = A-F
+U = uart.init(2,115200,100)
 # Define motor ports (make sure to change these for your setup)
 motorY = port.B
 motorX = port.F
@@ -82,24 +84,22 @@ def manualMotorControl(a, b):
     leftBound = -8
     rightBound = 8
 
-    if a == '2': #if no arrow keys pressed, go to limits or stop
+    if a == '2': #if no arrow keys pressed, go to limits or stop in place
         if motor.absolute_position(motorY) > rightBound:
-            while (motor.absolute_position(motorY)) != rightBound:
-                motor.run_to_absolute_position(motorY, rightBound, 0 - speed)
+            motor.run_to_absolute_position(motorY, rightBound - 1, 0 - speed)
         elif motor.absolute_position(motorY) < leftBound:
-            while (motor.absolute_position(motorY)) != leftBound:
-                motor.run_to_absolute_position(motorY, leftBound, speed)
+            motor.run_to_absolute_position(motorY, leftBound + 1, speed)
         else:
-            motor.stop(motorY)
+            # motor.stop(motorY)
+            motor.run_to_absolute_position(motorY, motor.absolute_position(motorY), 0 - speed)  
 
         if motor.absolute_position(motorX) > rightBound:
-            while (motor.absolute_position(motorX)) != rightBound:
-                motor.run_to_absolute_position(motorX, rightBound, 0 - speed)
+            motor.run_to_absolute_position(motorX, rightBound - 1, 0 - speed)
         elif motor.absolute_position(motorX) < leftBound:
-            while (motor.absolute_position(motorX)) != leftBound:
-                motor.run_to_absolute_position(motorX, leftBound, speed)
+            motor.run_to_absolute_position(motorX, leftBound + 1, speed)
         else:
-            motor.stop(motorX)
+            motor.run_to_absolute_position(motorX, motor.absolute_position(motorX), 0 - speed)  
+        
     elif a == '1': #up down
         if motor.absolute_position(motorY) > leftBound - 1 and motor.absolute_position(motorY) < rightBound + 1:
             if b == '1':

@@ -382,18 +382,18 @@ document.addEventListener('DOMContentLoaded', function() {
         ctx.translate(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
         ctx.rotate(gridRotation * Math.PI / 180);
         ctx.translate(-CANVAS_WIDTH / 2, -CANVAS_HEIGHT / 2);
-    
+
         drawGrid();
         drawWalls();
-    
+
         ctx.restore();
-    
+
         if (window.gameStarted) {
-            if (window.ballControlMode === 'sensors'){
+            if (window.ballControlMode === 'sensors') {
                 moveCircle(lastPitch, lastRoll);
-                drawTiltIndicator(pitch, roll);
+                drawTiltIndicator(lastPitch, lastRoll);
             }
-            
+
             drawBall(ballX, ballY);
             checkEndReached();
         }
@@ -689,7 +689,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const radius = BALL_RADIUS * 2;
         let tiltX = Math.sin(roll);
         let tiltY = Math.sin(pitch);
-    
+
         // Adjust tilt direction based on grid rotation
         switch(gridRotation) {
             case 90:
@@ -702,9 +702,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 [tiltX, tiltY] = [tiltY, -tiltX];
                 break;
         }
-    
+
         const rotatedBallPos = rotatePoint(ballX, ballY, -gridRotation);
-    
+
         ctx.beginPath();
         ctx.moveTo(rotatedBallPos.x, rotatedBallPos.y);
         ctx.lineTo(rotatedBallPos.x + tiltX * radius, rotatedBallPos.y + tiltY * radius);

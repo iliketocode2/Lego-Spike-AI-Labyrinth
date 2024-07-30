@@ -32,6 +32,9 @@
             <div class="wrap">
                 <h2 class="num">3</h2><button class="text inactive" id="ble_connect">Connect via BLE</button>
             </div>
+            <div class="wrap">
+                <h2 class="num">4</h2><button class="text inactive" id="board">Draw on Board</button>
+            </div>
 
             <div class="mpCode_container">
                 <script id='mpCode' type="mpy-editor" env="ble" ></script>
@@ -52,8 +55,10 @@
             <!--<button id="stop">Stop the simulation</button>-->
         </div>
         <div class="box right" style="text-align: center;">
-            <h3 id="update-text"></h3>
 
+            <!--<div class="cover" id="cover"></div>-->
+
+            <h3 id="update-text"></h3>
             <div class="grid-container">
                 <button id="rotate-ccw" class="rotate-btn">↺</button>
                 <div class="sim-frame-frame">
