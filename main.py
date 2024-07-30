@@ -104,7 +104,7 @@ def parse_ypr(data):
 def parse_xy(data):
     xy_data, _ = parse_payload(data)
     if not xy_data:
-        print("No x, y coordinate data available") #when openmv does not recognize the ball
+        # print("No x, y coordinate data available") #when openmv does not recognize the ball
         return None, None
     
     # since I converted byte string into string, remove b', ', and parentheses, then split by comma
@@ -130,6 +130,8 @@ def received_ble(data):
         x, y = parse_xy(xy_data)
         if x is not None and y is not None:
             window.updateBallPosition(x, y)
+            my_globals.x = x
+            my_globals.y = y
     else:
         yaw, pitch, roll = parse_ypr(ypr_data)
         if yaw is not None and pitch is not None and roll is not None:
@@ -160,13 +162,13 @@ async def ask(event):
             document.querySelector(".ble_info").style.display = 'block'
             document.getElementById("ble_connect").innerHTML = 'Disconnect'
             document.getElementById('board').classList.toggle("inactive")
-            document.getElementById('cover').style.display = 'none'
+            # document.getElementById('cover').style.display = 'none'
             connected = True
 
-@when("click", "#send_ble")
-def on_send_ble(event):
-    print("baguette")
-    my_globals.ble.write("baguette")
+# @when("click", "#send_ble")
+# def on_send_ble(event):
+#     print("baguette")
+#     my_globals.ble.write("baguette")
 
 #--------------------------- controlling the ball --------------------------------
 
@@ -179,8 +181,9 @@ def stop_simulation(event):
 #--------------------------- Recieve key call from js -----------------------------
 
 async def sendMotorPos(name, direc):
-    print('updated name and direc: ', name, ' ', direc)
-    my_globals.ble.write(f"{name}**{direc}")
+    # print('updated name and direc: ', name, ' ', direc)
+    if not my_globals.followPathOrNot:
+        my_globals.ble.write(f"{name}**{direc}")
 
 window.sendMotorPos = sendMotorPos
 

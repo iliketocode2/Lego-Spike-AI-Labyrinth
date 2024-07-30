@@ -53,27 +53,40 @@ def runConnected(me):
         payload += "**"
 
         pos1 = motor.absolute_position(motorY)
-        pos2 = motor.relative_position(motorX)
+        pos2 = motor.absolute_position(motorX)
         payload += "(B: "
         payload += str(pos1)
         payload += ", E: "
         payload += str(pos2)
         payload += ")"
 
-        me.send(payload)
-
         name = 0
         direc = 0
 
         if me.is_any:
-            print('received')
-            parts = me.read().split("**")
-            if len(parts) > 0:
-                name = parts[0] 
-                direc = parts[1]
+            print('Received incoming')
+            incoming = me.read()
+            if "!!" in incoming: #if running along path
+                print('Running along path')
+                parts = incoming.split("!!")
+                if len(parts) > 0:
+                    p1 = parts[0] 
+                    p2 = parts[1]
 
-            print('NAME:', name, 'DIREC:', direc)
-            manualMotorControl(name, direc)
+                print('POS 1:', p1, 'POS 2:', p2)
+                AIMotorControl(p1, p2)
+                
+            else: #if arrow keys pressed
+                print('Running using arrow keys')
+                parts = incoming.split("**")
+                if len(parts) > 0:
+                    name = parts[0] 
+                    direc = parts[1]
+
+                print('NAME:', name, 'DIREC:', direc)
+                manualMotorControl(name, direc)
+
+        me.send(payload)
 
         if not me.is_connected:
             print('lost connection')
@@ -81,6 +94,12 @@ def runConnected(me):
             
         utime.sleep(0.1)               
 
+def AIMotorControl(w, s):
+    speed = 50
+    while motor.absolute_position(motorX) != w and motor.absolute_position(motorY) != s:
+        motor.run_to_absolute_position(motorX, int(w), speed)
+        motor.run_to_absolute_position(motorY, int(s), speed)
+        
 def manualMotorControl(a, b):
     speed = 50
     leftBound = -8
