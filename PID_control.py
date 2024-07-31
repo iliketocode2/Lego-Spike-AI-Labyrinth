@@ -5,18 +5,23 @@ import js
 import asyncio
 
 class PIDController:
-    def __init__(self, kp, ki, kd):
+    def __init__(self, kp, ki, kd, windup_limit=100):
         self.kp = kp
         self.ki = ki
         self.kd = kd
+        self.windup_limit = windup_limit
         self.previous_error = 0
         self.integral = 0
+        self.previous_measurement = 0
 
-    def compute(self, error, dt):
+    def compute(self, setpoint, measurement, dt):
+        error = setpoint - measurement
         self.integral += error * dt
-        derivative = (error - self.previous_error) / dt
-        output = self.kp * error + self.ki * self.integral + self.kd * derivative
+        self.integral = max(-self.windup_limit, min(self.windup_limit, self.integral))
+        derivative = (measurement - self.previous_measurement) / dt
+        output = self.kp * error + self.ki * self.integral - self.kd * derivative
         self.previous_error = error
+        self.previous_measurement = measurement
         return output
 
 class BallBalancer:
@@ -25,14 +30,24 @@ class BallBalancer:
         self.current_target = 0
         self.pid_x = PIDController(kp=1, ki=0.1, kd=0.05)
         self.pid_y = PIDController(kp=1, ki=0.1, kd=0.05)
+        self.motorX_min = -140
+        self.motorX_max = -35
+        self.motorY_min = -140
+        self.motorY_max = -110
 
     def get_ball_position(self):
         return my_globals.x, my_globals.y
 
+    def scale_output(self, output, motor_min, motor_max):
+        pid_max = 100  # Example max PID output, adjust if necessary
+        scaled_output = max(motor_min, min(motor_max, (output / pid_max) * (motor_max - motor_min) + motor_min))
+        return int(scaled_output)
+
     async def move_to_next_square(self):
         while self.current_target < len(self.path):
             target = self.path[self.current_target]
-            target_x, target_y = map(int, target.split(','))
+            grid_x, grid_y = map(int, target.split(','))
+            target_x, target_y = grid_to_pixel(grid_x, grid_y)
 
             reached_target = False
             attempts = 0
@@ -41,44 +56,37 @@ class BallBalancer:
             while not reached_target and attempts < max_attempts:
                 ball_x, ball_y = self.get_ball_position()
                 
-                error_x = target_x - ball_x
-                error_y = target_y - ball_y
+                dt = 0.5  # Time step, adjust as needed
+                output_x = self.pid_x.compute(target_x, ball_x, dt)
+                output_y = self.pid_y.compute(target_y, ball_y, dt)
 
-                if abs(error_x) < 0.1 and abs(error_y) < 0.1:
-                    reached_target = True
-                    break  # Ball is centered in the target square
+                # Scale PID outputs to motor commands
+                motorX_command = self.scale_output(output_x, self.motorX_min, self.motorX_max)
+                motorY_command = self.scale_output(output_y, self.motorY_min, self.motorY_max)
 
-                dt = 0.1  # Time step, adjust as needed
-                output_x = self.pid_x.compute(error_x, dt)
-                output_y = self.pid_y.compute(error_y, dt)
-
-                # Convert PID outputs to motor commands
-                motorX_command = int(output_x) % 100  # Scale as needed
-                motorY_command = int(output_y) % 100  # Scale as needed
-
-                # send commands to Spike Prime
-                print("giving coordinates to the spike")
-
-                while my_globals.x != motorX_command or my_globals.y != motorY_command:
-                    print("Running to position: ", motorX_command, " ", motorY_command, ". Attempt: ", attempts)
-                    my_globals.ble.write(f"{motorX_command}!!{motorY_command}")
-                    await asyncio.sleep(1)
+                print(f"Motor to position: {motorX_command}, {motorY_command}. bTarget: {target_x}, {target_y}. bPos: {ball_x}, {ball_y}")
+                my_globals.ble.write(f"{motorX_command}!!{motorY_command}")
+                await asyncio.sleep(dt)
 
                 attempts += 1
+
+                if abs(target_x - ball_x) < 5 and abs(target_y - ball_y) < 5:  # Tolerance
+                    reached_target = True
+                    break
 
             if reached_target:
                 print(f"Reached target {self.current_target + 1} of {len(self.path)}")
                 self.current_target += 1
             else:
                 print(f"Failed to reach target {self.current_target + 1} after {max_attempts} attempts")
-                break  #exit the method if we fail to reach a target
+                break
 
         if self.current_target == len(self.path):
             print("Reached the final destination!")
-            # time.sleep(1)
-            # my_globals.followPathOrNot = False
+            my_globals.followPathOrNot = False
         else:
             print("Path following incomplete")
+            my_globals.followPathOrNot = False
 
     async def run(self):
         for _ in range(len(self.path)):
@@ -86,6 +94,24 @@ class BallBalancer:
             self.current_target += 1
             if self.current_target >= len(self.path):
                 break
+
+
+def grid_to_pixel(grid_x, grid_y):
+    # Define the boundaries of the maze
+    left = 77
+    right = 267
+    top = 210
+    bottom = 22
+    
+    # Calculate the width and height of each grid cell
+    cell_width = (right - left) / 5
+    cell_height = (top - bottom) / 5
+    
+    # Calculate the center of the specified grid cell
+    pixel_x = left + (grid_x + 0.5) * cell_width
+    pixel_y = bottom + (4 - grid_y + 0.5) * cell_height  # Invert y-axis
+    
+    return int(pixel_x), int(pixel_y)
 
 def runSpikeToEndPos():
     my_globals.followPathOrNot = True

@@ -158,7 +158,6 @@ async def ask(event):
             print('name ', name)
             document.getElementById("ble_connect").innerHTML = 'Connecting...'
             await my_globals.ble.connect() 
-            print('connected!')
             document.querySelector(".ble_info").style.display = 'block'
             document.getElementById("ble_connect").innerHTML = 'Disconnect'
             document.getElementById('board').classList.toggle("inactive")

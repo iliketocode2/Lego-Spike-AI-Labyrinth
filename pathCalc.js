@@ -266,7 +266,7 @@ function runQLearning() {
             totalReward += reward;
             
             if (done) {
-                console.log(`Episode ${episode + 1} finished after ${step + 1} steps. Total reward: ${totalReward}`);
+                // console.log(`Episode ${episode + 1} finished after ${step + 1} steps. Total reward: ${totalReward}`);
                 break;
             }
         }

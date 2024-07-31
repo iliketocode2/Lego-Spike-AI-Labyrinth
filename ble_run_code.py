@@ -7,17 +7,17 @@ from hub import port, motion_sensor, uart
 #port 0-5 = A-F
 U = uart.init(2,115200,100)
 # Define motor ports (make sure to change these for your setup)
-motorY = port.B
+motorY = port.B #geared motor
 motorX = port.F
 
 def peripheral(name): 
     # zero motors
     print('Zeroing motors...')
-    while (motor.absolute_position(motorX)) != 0:
-        motor.run_to_absolute_position(motorX, 0, 100)
+    while (motor.absolute_position(motorX)) != -100:
+        motor.run_to_absolute_position(motorX, -100, 100)
     motor.reset_relative_position(motorX)
-    while (motor.absolute_position(motorY)) != 0:
-        motor.run_to_absolute_position(motorY, 0, 100)
+    while (motor.absolute_position(motorY)) != -125:
+        motor.run_to_absolute_position(motorY, -125, 100)
     motor.reset_relative_position(motorY)
     print('Motors zeroed')
 
@@ -52,11 +52,11 @@ def runConnected(me):
 
         payload += "**"
 
-        pos1 = motor.absolute_position(motorY)
-        pos2 = motor.absolute_position(motorX)
-        payload += "(B: "
+        pos1 = motor.absolute_position(motorX)
+        pos2 = motor.absolute_position(motorY)
+        payload += "(mX: "
         payload += str(pos1)
-        payload += ", E: "
+        payload += ", mY: "
         payload += str(pos2)
         payload += ")"
 
@@ -73,8 +73,8 @@ def runConnected(me):
                     p1 = parts[0] 
                     p2 = parts[1]
 
-                print('POS 1:', p1, 'POS 2:', p2)
-                AIMotorControl(p1, p2)
+                    AIMotorControl(int(p1), int(p2))
+
                 
             else: #if arrow keys pressed
                 print('Running using arrow keys')
@@ -94,49 +94,71 @@ def runConnected(me):
             
         utime.sleep(0.1)               
 
-def AIMotorControl(w, s):
+# def AIMotorControl(w, s):
+#     speed = 50
+#     for i in range(100):
+#         motor.run_to_absolute_position(motorX, int(w), speed)
+#         motor.run_to_absolute_position(motorY, int(s), speed)
+
+def AIMotorControl(x_pos, y_pos):
     speed = 50
-    while motor.absolute_position(motorX) != w and motor.absolute_position(motorY) != s:
-        motor.run_to_absolute_position(motorX, int(w), speed)
-        motor.run_to_absolute_position(motorY, int(s), speed)
+
+    while abs(motor.absolute_position(motorX) - x_pos) > 5 or abs(motor.absolute_position(motorY) - y_pos) > 5:
+        if abs(motor.absolute_position(motorX) - x_pos) <= 5:
+            motor.stop(motorX)
+        else:
+            if x_pos > motor.absolute_position(motorX):
+                motor.run(motorX, speed)
+            else:
+                motor.run(motorX, -speed)
+
+        if abs(motor.absolute_position(motorY) - y_pos) <= 5:
+            motor.stop(motorY)
+        else:
+            if y_pos > motor.absolute_position(motorY):
+                motor.run(motorY, speed)
+            else:
+                motor.run(motorY, -speed)
+
+        time.sleep(0.1)
         
 def manualMotorControl(a, b):
-    speed = 50
-    leftBound = -8
-    rightBound = 8
+    speed = 100
 
-    if a == '2': #if no arrow keys pressed, go to limits or stop in place
-        if motor.absolute_position(motorY) > rightBound:
-            motor.run_to_absolute_position(motorY, rightBound - 1, 0 - speed)
-        elif motor.absolute_position(motorY) < leftBound:
-            motor.run_to_absolute_position(motorY, leftBound + 1, speed)
-        else:
-            # motor.stop(motorY)
-            motor.run_to_absolute_position(motorY, motor.absolute_position(motorY), 0 - speed)  
+    leftBound = -140
+    rightBound = -35
 
-        if motor.absolute_position(motorX) > rightBound:
-            motor.run_to_absolute_position(motorX, rightBound - 1, 0 - speed)
-        elif motor.absolute_position(motorX) < leftBound:
-            motor.run_to_absolute_position(motorX, leftBound + 1, speed)
-        else:
-            motor.run_to_absolute_position(motorX, motor.absolute_position(motorX), 0 - speed)  
+    leftBound2 = -140
+    rightBound2 = -110
+
+    if a == '2': #if no arrow keys pressed stop in place
+        motor.stop(motorX)
+        motor.stop(motorY)
         
     elif a == '1': #up down
-        if motor.absolute_position(motorY) > leftBound - 1 and motor.absolute_position(motorY) < rightBound + 1:
+        if motor.absolute_position(motorY) < leftBound2:
+            motor.run_to_absolute_position(motorY, leftBound2 + 1, 0 - speed)
+        elif motor.absolute_position(motorY) > rightBound2:
+            motor.run_to_absolute_position(motorY, rightBound2 - 1, speed)
+        else:
             if b == '1':
-                motor.run(motorY, speed)
-            elif b == '-1':
                 motor.run(motorY, 0 - speed)
-        else:
-            motor.stop(motorY)
-    elif a == '0': #right left
-        if motor.absolute_position(motorX) > leftBound - 1 and motor.absolute_position(motorX) < rightBound + 1:
-            if b == '1':
-                motor.run(motorX, speed)
             elif b == '-1':
-                motor.run(motorX, 0 - speed)   
+                motor.run(motorY, speed)
+
+    elif a == '0': #right left
+        if motor.absolute_position(motorX) < leftBound:
+            motor.run_to_absolute_position(motorX, leftBound + 1, speed)
+        elif motor.absolute_position(motorX) > rightBound:
+            motor.run_to_absolute_position(motorX, rightBound - 1, 0 - speed)
         else:
-            motor.stop(motorX)
+            if b == '1':
+                if motor.absolute_position(motorX) < rightBound:
+                    motor.run(motorX, 0 - speed)
+            elif b == '-1':
+                if motor.absolute_position(motorX) > leftBound:
+                    motor.run(motorX, speed)
+
     else:
         print('invalid input')
 
