@@ -22,7 +22,7 @@ If the orientation of your screen compared to the physical device you build is o
     - OpenMV Cam (I used an R2) with a [custom PCB connector on the back](https://www.instructables.com/Backpack-1-OpenMV-Camera/) -- this will connect to the black section of a lego ultrasonic sensor
     - [Lego pieces](https://www.brickowl.com/catalog/lego-spike-prime-set-45678/inventory): This model contains ~480 pieces</li>
     - [A red Lego ball](https://www.brickowl.com/catalog/lego-red-hard-plastic-ball-52mm-22119-23065) (unless you change the OpenMV color detection/blob code)</li>
-    - [Instructions for the model I built](https://drive.google.com/file/d/1D8D3vNA3ystbz31rbjCMvUVYvHGMd4PP/view?usp=sharing)
+    - [Instructions](https://drive.google.com/file/d/1RjmZkfVSPhEm0D2quI89XZbNSfkmIFvk/view?usp=sharing) for the model
     - A cord to connect the Spike Prime to your computer (typically usb to micro usb)
   
   - ### Software
@@ -50,4 +50,4 @@ If the orientation of your screen compared to the physical device you build is o
 - [How to setup Github Pages and VS Code with GitHub](https://shimmering-cesium-c35.notion.site/Summer-of-24-0c8bd589e46b4b8b84bc484837b5b102?p=a9854b32e4454b29ae056981a6eb6ee1&pm=c)
 
 ## Build Render
-![spike labyrinth model render](https://github.com/user-attachments/assets/572d4f52-462e-4aab-9dce-a34d50dcdc79)
+(![AI Spike Maze Render](https://github.com/user-attachments/assets/84e43fb1-906a-4cce-95dd-5be04c1b3ec9)
