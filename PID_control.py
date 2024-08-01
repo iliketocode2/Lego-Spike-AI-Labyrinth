@@ -30,8 +30,8 @@ class BallBalancer:
         self.current_target = 0
         self.pid_x = PIDController(kp=1, ki=0.1, kd=0.05)
         self.pid_y = PIDController(kp=1, ki=0.1, kd=0.05)
-        self.motorX_min = -140
-        self.motorX_max = -35
+        self.motorX_min = -135
+        self.motorX_max = -40
         self.motorY_min = -140
         self.motorY_max = -110
 
@@ -52,10 +52,27 @@ class BallBalancer:
             reached_target = False
             attempts = 0
             max_attempts = 100
+            stuck_count = 0
+            last_position = None
 
             while not reached_target and attempts < max_attempts:
                 ball_x, ball_y = self.get_ball_position()
                 
+                # Check if the ball is stuck
+                if last_position is not None and abs(ball_x - last_position[0]) < 1 and abs(ball_y - last_position[1]) < 1:
+                    stuck_count += 1
+                else:
+                    stuck_count = 0
+                last_position = (ball_x, ball_y)
+
+                # If the ball is stuck for x consecutive attempts, send wiggle command
+                if stuck_count >= 10:
+                    print("Ball appears to be stuck. Sending wiggle command.")
+                    my_globals.ble.write("-9000!!-9000")  # Special wiggle command
+                    await asyncio.sleep(0.7)  # Wait for wiggle to complete
+                    stuck_count = 0
+                    continue
+
                 dt = 0.5  # Time step, adjust as needed
                 output_x = self.pid_x.compute(target_x, ball_x, dt)
                 output_y = self.pid_y.compute(target_y, ball_y, dt)
