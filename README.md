@@ -50,4 +50,4 @@ If the orientation of your screen compared to the physical device you build is o
 - [How to setup Github Pages and VS Code with GitHub](https://shimmering-cesium-c35.notion.site/Summer-of-24-0c8bd589e46b4b8b84bc484837b5b102?p=a9854b32e4454b29ae056981a6eb6ee1&pm=c)
 
 ## Build Render
-![spike labyrinth model render](https://github.com/user-attachments/assets/572d4f52-462e-4aab-9dce-a34d50dcdc79)
+(![AI Spike Maze Render](https://github.com/user-attachments/assets/84e43fb1-906a-4cce-95dd-5be04c1b3ec9)
