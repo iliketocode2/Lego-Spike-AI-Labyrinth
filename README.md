@@ -14,6 +14,7 @@
 The [website](https://iliketocode2.github.io/Lego-Spike-AI-Labyrinth/) (what you will have displayed on your screen after running the code in an IDE with HTML preview features) features two primary modes: Free Play mode and AI mode. Within Free Play mode there are two sub modes: (x, y) mapping and (pitch, roll) mapping. 
 - To enter Free Play mode, draw labyrinth walls, select a start and end square, and select ‘no’ when the popup prompts you to draw the path. Then, to toggle between (x, y) and (pitch, roll) mode, change the toggle on the bottom of the screen. The (x, y) mode uses coordinates sent from the script running on the OpenMV camera to move the animated ball. The (pitch, roll) mode uses pitch and roll data from the Spike to simulate the location of the ball (basically running a physics simulation).
 - To enter AI mode draw labyrinth walls, select a start and end square, and select ‘yes’ when the popup prompts you to draw the path. To have the Spike move the ball from the start square to the end square press 'Run the Spike along the path'. After the run attempt is complete, the grid will reset if the ball has correctly reached the end square. Otherwise, click 'Manual Stop' to reset the run.
+
 If the orientation of your screen compared to the physical device you build is off, simply rotate the on-screen grid by pressing the arrow button on either side of the grid. 
 
 ## Materials
