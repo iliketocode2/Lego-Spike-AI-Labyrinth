@@ -50,5 +50,6 @@ If the orientation of your screen compared to the physical device you build is o
 - [Q-learning Explanation](https://www.datacamp.com/tutorial/introduction-q-learning-beginner-tutorial)
 - [How to setup Github Pages and VS Code with GitHub](https://shimmering-cesium-c35.notion.site/Summer-of-24-0c8bd589e46b4b8b84bc484837b5b102?p=a9854b32e4454b29ae056981a6eb6ee1&pm=c)
 
-## Build Render
-(![AI Spike Maze Render](https://github.com/user-attachments/assets/84e43fb1-906a-4cce-95dd-5be04c1b3ec9)
+## Build Render and Web Interface
+![AI Spike Maze Render and Interface](https://github.com/user-attachments/assets/9d405192-cb30-4c28-85f8-17b4fc5f4358)
+
