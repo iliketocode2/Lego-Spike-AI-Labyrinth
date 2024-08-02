@@ -3,7 +3,7 @@
 <p>The goal of this project was to explore potential roles for the Lego Spike Prime in a system with external devices and heavy computation and graphical display. This repository contains all of the necessary code and instructions for you to recreate a similar project should you choose to do so. In addition, if you are looking here for specific Spike-related processes (such as connecting to the Spike with Bluetooth or using Pyscript with the Spike in general) parts of my code feature comments and explanations of these applications.</p>
 
 > [!WARNING]
-> Much of the code in this project is custom to my setup (i.e., motor starting values and other constants). However, I have identified these variables in my code, so it is necessary to read files carefeully before executing any file. In addition, this project contains many existing bugs. Feel free to create issues for this repository.
+> Much of the code in this project is custom to my setup (i.e., motor starting values and other constants). However, I have identified these variables in my code, so it is necessary to read files carefeully before executing them. In addition, this project contains many existing bugs. Feel free to create issues for this repository.
 
 ## Communication Overview
 ![commnication flow chart](https://github.com/user-attachments/assets/9fabc1e3-81ef-417d-94d6-e6918032a667)
