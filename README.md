@@ -1,19 +1,19 @@
 # Build and Program the AI Spike Labyrinth
 <h3>OpenMV & Uart, Q-learning, Bluetooth, and Pyscript (With extra js)</h3>
-<p>The goal of this project was to explore potential roles for the Lego Spike Prime in a system with external devices and heavy computation and graphical display. This repository contains all of the code and instruction necessary for you to recreate a similar project should you choose to do so. In addition if you are looking here for specific Spike-related processes (such as connecting to the Spike with bluetooth or using Pyscript with the Spike in general) parts of my code feature comments and explanations of these applications.</p>
+<p>The goal of this project was to explore potential roles for the Lego Spike Prime in a system with external devices and heavy computation and graphical display. This repository contains all of the necessary code and instructions for you to recreate a similar project should you choose to do so. In addition, if you are looking here for specific Spike-related processes (such as connecting to the Spike with Bluetooth or using Pyscript with the Spike in general) parts of my code feature comments and explanations of these applications.</p>
 
 > [!WARNING]
-> This project is not yet finished as I have yet to write the AI algorithm that physically runs the lego motors to move the ball from the chosen start square to the end square. There are also many existing bugs. Feel free to create issues for this repository.
+> Much of the code in this project is custom to my setup (i.e., motor starting values and other constants). However, I have identified these variables in my code, so it is necessary to read files carefeully before executing any file. In addition, this project contains many existing bugs. Feel free to create issues for this repository.
 
 ## Communication Overview
 ![commnication flow chart](https://github.com/user-attachments/assets/9fabc1e3-81ef-417d-94d6-e6918032a667)
-- Solid lines depict physical connection, dotted Lines depict ble connection.
-- Double sided arrows indicate two-way communication (send and receive) data, single sided arrows represent one-way communication.
+- Solid lines depict physical connection; dotted lines depict ble connection.
+- Double-sided arrows indicate two-way communication (send and receive) data, single sided arrows represent one-way communication.
 
 ## Website Overview
 The [website](https://iliketocode2.github.io/Lego-Spike-AI-Labyrinth/) (what you will have displayed on your screen after running the code in an IDE with HTML preview features) features two primary modes: Free Play mode and AI mode. Within Free Play mode there are two sub modes: (x, y) mapping and (pitch, roll) mapping. 
 - To enter Free Play mode, draw labyrinth walls, select a start and end square, and select ‘no’ when the popup prompts you to draw the path. Then, to toggle between (x, y) and (pitch, roll) mode, change the toggle on the bottom of the screen. The (x, y) mode uses coordinates sent from the script running on the OpenMV camera to move the animated ball. The (pitch, roll) mode uses pitch and roll data from the Spike to simulate the location of the ball (basically running a physics simulation).
-- To enter AI mode draw labyrinth walls, select a start and end square, and select ‘yes’ when the popup prompts you to draw the path. The spike will move the ball from the start square to the end square soon after (this part yet to be implemented).
+- To enter AI mode draw labyrinth walls, select a start and end square, and select ‘yes’ when the popup prompts you to draw the path. The spike will move the ball from the start square to the end square soon after.
 If the orientation of your screen compared to the physical device you build is off, simply rotate the on-screen grid by pressing the arrow button on either side of the grid. 
 
 ## Materials
