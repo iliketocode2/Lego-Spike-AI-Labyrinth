@@ -69,7 +69,7 @@ class BallBalancer:
                 if stuck_count >= 10:
                     print("Ball appears to be stuck. Sending wiggle command.")
                     my_globals.ble.write("-9000!!-9000")  # Special wiggle command
-                    await asyncio.sleep(0.7)  # Wait for wiggle to complete
+                    await asyncio.sleep(0.5)  # Wait for wiggle to complete
                     stuck_count = 0
                     continue
 

@@ -169,7 +169,7 @@ def AIMotorControl(X, Y):
         return (x_reached and not x_exceeded) and (y_reached and not y_exceeded)
 
 
-def wiggle_motors(amplitude=20, duration=4):
+def wiggle_motors(amplitude=35, duration=4):
     start_x = motor.absolute_position(motorX)
     start_y = motor.absolute_position(motorY)
     
