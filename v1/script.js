@@ -1,8 +1,3 @@
-window.addEventListener('error', function(event) {
-    console.error('Caught an error:', event.message);
-    return false;
-});
-
 document.addEventListener('DOMContentLoaded', function() {
     window.ROWS = 5;
     window.COLS = 5;

@@ -11,7 +11,7 @@ ARDUINO_NANO = 128
 SPIKE = 256
 path = "https://raw.githubusercontent.com/chrisbuerginrogers/SPIKE_Prime/main/BLE/BLE_CEEO.py"
 
-def on_connect(event):
+async def on_connect(event):
     if terminal.connected:
         connect.innerText = 'Connect the Spike'
         await terminal.board.disconnect()
